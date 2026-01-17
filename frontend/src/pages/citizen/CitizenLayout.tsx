@@ -9,13 +9,13 @@ import './CitizenDashboard.css';
 // Sidebar Component
 const Sidebar = () => {
     const location = useLocation();
-    
+
     const navItems = [
         { icon: <Home className="nav-icon" />, label: "myJanSetu", path: "/citizen", isLink: true },
         { icon: <Grid3X3 className="nav-icon" />, label: "Services", path: "/citizen/services", isLink: true },
         { icon: <FileText className="nav-icon" />, label: "DigiLocker", path: "#", isLink: false },
         { icon: <MapPin className="nav-icon" />, label: "State", path: "#", isLink: false },
-        { icon: <BookOpen className="nav-icon" />, label: "Schemes", path: "#", isLink: false },
+        { icon: <BookOpen className="nav-icon" />, label: "Schemes", path: "/citizen/schemes", isLink: true },
         { icon: <LayoutDashboard className="nav-icon" />, label: "Dashboard", path: "/citizen", isLink: true },
     ];
 
@@ -26,14 +26,14 @@ const Sidebar = () => {
                     {navItems.map((item, index) => {
                         // Only highlight if exact match (not parent path)
                         const isActive = location.pathname === item.path;
-                        
+
                         if (item.isLink) {
                             return (
                                 <li key={index}>
-                                    <NavLink 
-                                        to={item.path} 
+                                    <NavLink
+                                        to={item.path}
                                         end={item.path === "/citizen"} // Use 'end' prop to match exactly for /citizen
-                                        className={({ isActive: navIsActive }) => 
+                                        className={({ isActive: navIsActive }) =>
                                             `nav-item ${navIsActive ? 'active' : ''}`
                                         }
                                     >
@@ -112,12 +112,12 @@ const Header = () => {
                     <div className="avatar">{getUserInitials()}</div>
                     <span className="user-name">{getUserName()}</span>
                 </div>
-                <button 
+                <button
                     onClick={() => {
                         logout();
                         window.location.href = '/';
-                    }} 
-                    className="icon-btn logout-btn" 
+                    }}
+                    className="icon-btn logout-btn"
                     title="Logout"
                 >
                     <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Logout</span>
