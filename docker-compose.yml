@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jansetu
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  platform:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.fast  # Use Dockerfile.fast for faster builds (Python 3.12)
+      # dockerfile: Dockerfile     # Use Dockerfile for Python 3.14 (slower, requires Rust)
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/jansetu
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET_KEY: your-secret-key-change-in-production
+      CORS_ORIGINS: '["http://localhost:3000","http://localhost:5173"]'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: uvicorn jansetu_platform.main:app --host 0.0.0.0 --port 8000 --reload
+
+  healthcare:
+    build:
+      context: ./backend/services/healthcare
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      PLATFORM_URL: http://platform:8000
+      SERVICE_BASE_URL: http://healthcare:8001
+      HEALTHCARE_DB_URL: sqlite:///./healthcare.db
+    depends_on:
+      - platform
+    volumes:
+      - ./backend/services/healthcare:/app
+
+  agriculture:
+    build:
+      context: ./backend/services/agriculture
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    environment:
+      PLATFORM_URL: http://platform:8000
+      SERVICE_BASE_URL: http://agriculture:8002
+      AGRICULTURE_DB_URL: sqlite:///./agriculture.db
+    depends_on:
+      - platform
+    volumes:
+      - ./backend/services/agriculture:/app
+
+  grievance:
+    build:
+      context: ./backend/services/grievance
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    environment:
+      PLATFORM_URL: http://platform:8000
+      SERVICE_BASE_URL: http://grievance:8003
+      GRIEVANCE_DB_URL: sqlite:///./grievance.db
+    depends_on:
+      - platform
+    volumes:
+      - ./backend/services/grievance:/app
+
+volumes:
+  postgres_data:
