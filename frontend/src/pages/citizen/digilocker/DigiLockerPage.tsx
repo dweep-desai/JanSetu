@@ -3,7 +3,7 @@ import {
     Search, ShieldCheck, FileText, Download, Share2,
     AlertTriangle, RefreshCw, CheckCircle2,
 
-    Landmark, CreditCard, GraduationCap, Car, User
+    CreditCard, GraduationCap, Car, User, Loader2, XCircle
 } from 'lucide-react';
 import api from '../../../services/api';
 // import { digiLockerServices } from '../../../services/serviceDefinitions';
@@ -23,7 +23,7 @@ const DigiLockerPage = () => {
     const [loading, setLoading] = useState(true);
     const [isLinked, setIsLinked] = useState(false);
     const [showLinkModal, setShowLinkModal] = useState(false);
-    const [digilockerIdInput, setDigilockerIdInput] = useState('');
+    const [linkStatus, setLinkStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [searchQuery, setSearchQuery] = useState('');
     const [fetchingDoc, setFetchingDoc] = useState<string | null>(null);
 
@@ -45,13 +45,27 @@ const DigiLockerPage = () => {
     };
 
     const handleLinkDigiLocker = async () => {
+        setLinkStatus('loading');
         try {
-            await api.linkDigiLocker(digilockerIdInput);
-            setShowLinkModal(false);
-            fetchMyDocuments();
-            setDigilockerIdInput('');
+            // Simulate delay for "moving" icon
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Call API (mocked mainly)
+            await api.linkDigiLocker('centralized-auth'); // Pass dummy or system ID
+
+            setLinkStatus('success');
+
+            // Wait a bit to show success tick
+            setTimeout(() => {
+                setShowLinkModal(false);
+                setIsLinked(true);
+                fetchMyDocuments();
+                setLinkStatus('idle');
+            }, 1000);
+
         } catch (error) {
-            alert("Failed to link DigiLocker");
+            setLinkStatus('error');
+            setTimeout(() => setLinkStatus('idle'), 2000); // Reset after showing error
         }
     };
 
@@ -215,63 +229,54 @@ const DigiLockerPage = () => {
                     </div>
                 </section>
 
-                {/* 5. State Documents (Mock) */}
-                <section>
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">State Government Services</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {[
-                            { name: 'Delhi', code: 'DL' },
-                            { name: 'Maharashtra', code: 'MH' },
-                            { name: 'Karnataka', code: 'KA' },
-                            { name: 'Uttar Pradesh', code: 'UP' },
-                            { name: 'Gujarat', code: 'GJ' },
-                            { name: 'Rajasthan', code: 'RJ' }
-                        ].map((state) => (
-                            <div key={state.code} className="bg-white p-4 rounded-xl border border-gray-100 text-center hover:bg-gray-50 cursor-pointer transition-colors">
-                                <div className="w-10 h-10 mx-auto bg-gray-100 rounded-lg flex items-center justify-center mb-2">
-                                    <Landmark className="h-5 w-5 text-gray-500" />
-                                </div>
-                                <span className="text-sm font-medium text-gray-700">{state.name}</span>
-                            </div>
-                        ))}
-                    </div>
-                    <button className="w-full mt-4 py-3 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors">
-                        View All (36) States
-                    </button>
-                </section>
-
+                {/* 5. State Documents (Mock) - REMOVED as per request */}
             </div>
 
             {/* Link Modal */}
             {showLinkModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-in zoom-in-95">
-                        <h3 className="text-xl font-bold text-gray-900 mb-4">Link DigiLocker Account</h3>
-                        <p className="text-gray-600 text-sm mb-6">Enter your DigiLocker ID / Aadhaar / Mobile number to link your account.</p>
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 animate-in zoom-in-95 text-center">
+                        <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <ShieldCheck className="w-8 h-8 text-indigo-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">Link DigiLocker</h3>
+                        <p className="text-gray-500 text-sm mb-8">
+                            We will securely link your account using your centralized JanSetu credentials.
+                        </p>
 
-                        <input
-                            type="text"
-                            placeholder="Ex: 9876543210"
-                            className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 outline-none"
-                            autoFocus
-                            value={digilockerIdInput}
-                            onChange={(e) => setDigilockerIdInput(e.target.value)}
-                        />
+                        <button
+                            onClick={handleLinkDigiLocker}
+                            disabled={linkStatus === 'loading' || linkStatus === 'success'}
+                            className={`w-full py-3 rounded-xl font-bold text-white transition-all duration-300 flex items-center justify-center gap-2 ${linkStatus === 'idle' ? 'bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-indigo-200' :
+                                linkStatus === 'loading' ? 'bg-indigo-400 cursor-wait' :
+                                    linkStatus === 'success' ? 'bg-green-500' :
+                                        'bg-red-500'
+                                }`}
+                        >
+                            {linkStatus === 'idle' && (
+                                <>
+                                    Initiate Linking
+                                </>
+                            )}
+                            {linkStatus === 'loading' && (
+                                <Loader2 className="w-6 h-6 animate-spin" />
+                            )}
+                            {linkStatus === 'success' && (
+                                <CheckCircle2 className="w-6 h-6 animate-in zoom-in" />
+                            )}
+                            {linkStatus === 'error' && (
+                                <XCircle className="w-6 h-6 animate-in zoom-in" />
+                            )}
+                        </button>
 
-                        <div className="flex gap-3 justify-end">
+                        {linkStatus === 'idle' && (
                             <button
                                 onClick={() => setShowLinkModal(false)}
-                                className="px-4 py-2 text-gray-600 title-font font-medium hover:bg-gray-100 rounded-lg"
+                                className="mt-4 text-sm text-gray-500 hover:text-gray-700 font-medium"
                             >
                                 Cancel
                             </button>
-                            <button
-                                onClick={handleLinkDigiLocker}
-                                className="px-4 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700"
-                            >
-                                Link Account
-                            </button>
-                        </div>
+                        )}
                     </div>
                 </div>
             )}
