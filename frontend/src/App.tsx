@@ -12,6 +12,7 @@ import HospitalsNearMe from './pages/citizen/health/HospitalsNearMe';
 import CallAmbulanceEmergency from './pages/citizen/health/CallAmbulanceEmergency';
 import SearchMedicines from './pages/citizen/health/SearchMedicines';
 import PoliceStationsNearMe from './pages/citizen/emergency/PoliceStationsNearMe';
+import Schemes from './pages/citizen/Schemes';
 
 import ProviderDashboard from './pages/provider/ProviderDashboard';
 
@@ -82,6 +83,7 @@ const AppRoutes = () => {
         <Route path="health/call-ambulance" element={<CallAmbulanceEmergency />} />
         <Route path="health/search-medicines" element={<SearchMedicines />} />
         <Route path="emergency/police-stations-near-me" element={<PoliceStationsNearMe />} />
+        <Route path="schemes" element={<Schemes />} />
       </Route>
 
 
