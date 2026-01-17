@@ -23,28 +23,28 @@ def generate_otp(length: int = None) -> str:
     return ''.join(random.choices(string.digits, k=length))
 
 
-def store_otp(otp_id: str, phone: str, otp_code: str) -> None:
+def store_otp(otp_id: str, aadhar: str, otp_code: str) -> None:
     """Store OTP in Redis with expiration."""
     import sys
     if redis_client is None:
         # Fallback: just print OTP (for development)
-        otp_msg = f"\n{'='*50}\nOTP for {phone}: {otp_code} (Redis not available)\n{'='*50}\n"
+        otp_msg = f"\n{'='*50}\nOTP for Aadhar {aadhar}: {otp_code} (Redis not available)\n{'='*50}\n"
         print(otp_msg, flush=True)
         sys.stdout.flush()
         return
     try:
         key = f"otp:{otp_id}"
-        value = f"{phone}:{otp_code}"
+        value = f"{aadhar}:{otp_code}"
         ttl = settings.OTP_EXPIRE_MINUTES * 60
         redis_client.setex(key, ttl, value)
     except Exception as e:
         print(f"Warning: Failed to store OTP in Redis: {e}", flush=True)
-        otp_msg = f"\n{'='*50}\nOTP for {phone}: {otp_code}\n{'='*50}\n"
+        otp_msg = f"\n{'='*50}\nOTP for Aadhar {aadhar}: {otp_code}\n{'='*50}\n"
         print(otp_msg, flush=True)
         sys.stdout.flush()
 
 
-def verify_otp(otp_id: str, phone: str, otp_code: str) -> bool:
+def verify_otp(otp_id: str, aadhar: str, otp_code: str) -> bool:
     """Verify OTP from Redis."""
     if redis_client is None:
         # In development without Redis, accept any 6-digit code
@@ -58,9 +58,9 @@ def verify_otp(otp_id: str, phone: str, otp_code: str) -> bool:
         if not stored_value:
             return False
         
-        stored_phone, stored_otp = stored_value.split(":")
+        stored_aadhar, stored_otp = stored_value.split(":")
         
-        if stored_phone == phone and stored_otp == otp_code:
+        if stored_aadhar == aadhar and stored_otp == otp_code:
             # Delete OTP after successful verification
             redis_client.delete(key)
             return True

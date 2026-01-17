@@ -3,20 +3,20 @@ import { useAuth } from '../../context/AuthContext';
 import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
-  const [phone, setPhone] = useState('');
+  const [aadhar, setAadhar] = useState('');
   const [otpId, setOtpId] = useState<string | null>(null);
   const [otpCode, setOtpCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login, verifyOTP } = useAuth();
 
-  const handlePhoneSubmit = async (e: React.FormEvent) => {
+  const handleAadharSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const response = await login(phone);
+      const response = await login(aadhar);
       setOtpId(response.otp_id);
       // In development, show OTP in console
       console.log('OTP sent. Check console for OTP code in development.');
@@ -33,7 +33,7 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await verifyOTP(phone, otpId!, otpCode);
+      await verifyOTP(aadhar, otpId!, otpCode);
       window.location.href = '/';
     } catch (err: any) {
       setError(err.message || 'Invalid OTP');
@@ -49,19 +49,18 @@ const LoginPage: React.FC = () => {
         <p className="subtitle">Unified Digital Public Infrastructure Platform</p>
         
         {!otpId ? (
-          <form onSubmit={handlePhoneSubmit}>
+          <form onSubmit={handleAadharSubmit}>
             <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
+              <label htmlFor="aadhar">Aadhar Card Number</label>
               <input
-                type="tel"
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                placeholder="Enter 10-digit phone number"
+                type="text"
+                id="aadhar"
+                value={aadhar}
+                onChange={(e) => setAadhar(e.target.value.toUpperCase().slice(0, 20))}
+                placeholder="Enter Aadhar (e.g., ABC123456789)"
                 required
-                pattern="[0-9]{10}"
-                maxLength={10}
-                minLength={10}
+                minLength={12}
+                maxLength={20}
               />
             </div>
             {error && <div className="error">{error}</div>}
@@ -86,7 +85,7 @@ const LoginPage: React.FC = () => {
               <p className="help-text">
                 Check the <strong>backend terminal</strong> for your OTP code.
                 <br />
-                It will display: <code>OTP for {phone}: XXXXXX</code>
+                It will display: <code>OTP for Aadhar {aadhar}: XXXXXX</code>
               </p>
             </div>
             {error && <div className="error">{error}</div>}
@@ -102,7 +101,7 @@ const LoginPage: React.FC = () => {
                 setError('');
               }}
             >
-              Change Phone Number
+              Change Aadhar Number
             </button>
           </form>
         )}

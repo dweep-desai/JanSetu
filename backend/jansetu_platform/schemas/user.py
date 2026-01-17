@@ -16,7 +16,8 @@ class RoleSchema(BaseModel):
 
 class UserBase(BaseModel):
     """Base user schema."""
-    phone: str = Field(..., min_length=10, max_length=15)
+    phone: Optional[str] = Field(None, min_length=10, max_length=15)  # Optional for backward compatibility
+    aadhar: str = Field(..., min_length=12, max_length=20)
 
 
 class UserCreate(UserBase):
@@ -31,3 +32,11 @@ class UserResponse(UserBase):
     created_at: datetime
     
     model_config = {"from_attributes": True}
+    
+    @classmethod
+    def model_validate(cls, obj):
+        """Override to handle backward compatibility with phone field."""
+        if hasattr(obj, 'phone') and obj.phone is None:
+            # If phone is None, we can still create the response
+            pass
+        return super().model_validate(obj)

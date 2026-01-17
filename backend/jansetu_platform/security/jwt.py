@@ -28,11 +28,11 @@ def verify_token(token: str) -> Optional[dict]:
         return None
 
 
-def create_token_for_user(user_id: int, phone: str, role: RoleType) -> str:
+def create_token_for_user(user_id: int, aadhar: str, role: RoleType) -> str:
     """Create token for a user."""
     data = {
         "sub": str(user_id),
-        "phone": phone,
+        "aadhar": aadhar,
         "role": role.value
     }
     return create_access_token(data)

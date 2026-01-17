@@ -4,12 +4,12 @@ from pydantic import BaseModel, Field
 
 class LoginRequest(BaseModel):
     """Login request schema."""
-    phone: str = Field(..., min_length=10, max_length=10, description="10-digit phone number")
+    aadhar: str = Field(..., min_length=12, max_length=20, description="Aadhar card number (e.g., ABC123456789)")
 
 
 class OTPRequest(BaseModel):
     """OTP verification request schema."""
-    phone: str = Field(..., min_length=10, max_length=10, description="10-digit phone number")
+    aadhar: str = Field(..., min_length=12, max_length=20, description="Aadhar card number (e.g., ABC123456789)")
     otp_id: str = Field(..., description="OTP ID returned from login")
     otp_code: str = Field(..., min_length=6, max_length=6, description="6-digit OTP code")
 

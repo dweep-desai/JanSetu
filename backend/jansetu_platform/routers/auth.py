@@ -22,22 +22,22 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
 
 @router.post("/login", response_model=OTPResponse)
 async def login(request: LoginRequest, db: Session = Depends(get_db)):
-    """Generate and send OTP for phone number."""
-    logger.info(f"Login request received for phone: {request.phone}")
+    """Generate and send OTP for Aadhar card number."""
+    logger.info(f"Login request received for Aadhar: {request.aadhar}")
     
-    # Validate phone number is exactly 10 digits
-    if not request.phone.isdigit() or len(request.phone) != 10:
-        logger.warning(f"Invalid phone number format: {request.phone}")
+    # Validate Aadhar format (alphanumeric, 12-20 characters)
+    if not request.aadhar or len(request.aadhar) < 12 or len(request.aadhar) > 20:
+        logger.warning(f"Invalid Aadhar format: {request.aadhar}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Phone number must be exactly 10 digits"
+            detail="Aadhar must be 12-20 characters (e.g., ABC123456789)"
         )
     
     # Get or create user with CITIZEN role by default
-    user = db.query(User).filter(User.phone == request.phone).first()
+    user = db.query(User).filter(User.aadhar == request.aadhar).first()
     
     if not user:
-        logger.info(f"Creating new user for phone: {request.phone}")
+        logger.info(f"Creating new user for Aadhar: {request.aadhar}")
         # Create new user with CITIZEN role
         citizen_role = db.query(Role).filter(Role.name == RoleType.CITIZEN).first()
         if not citizen_role:
@@ -46,7 +46,7 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
             db.commit()
             db.refresh(citizen_role)
         
-        user = User(phone=request.phone, role_id=citizen_role.id)
+        user = User(aadhar=request.aadhar, role_id=citizen_role.id)
         db.add(user)
         db.commit()
         db.refresh(user)
@@ -55,18 +55,18 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
     otp_code = generate_otp()
     otp_id = str(uuid.uuid4())
     
-    logger.info(f"Generated OTP for {request.phone}, OTP ID: {otp_id}")
+    logger.info(f"Generated OTP for Aadhar {request.aadhar}, OTP ID: {otp_id}")
     
     # Store OTP in Redis
-    store_otp(otp_id, request.phone, otp_code)
+    store_otp(otp_id, request.aadhar, otp_code)
     
     # In production, send OTP via SMS service
     # For now, we'll return it (remove in production!)
     import sys
-    otp_message = f"\n{'='*50}\nOTP for {request.phone}: {otp_code}\n{'='*50}\n"
+    otp_message = f"\n{'='*50}\nOTP for Aadhar {request.aadhar}: {otp_code}\n{'='*50}\n"
     print(otp_message, flush=True)
     sys.stdout.flush()  # Force flush to ensure it appears immediately
-    logger.info(f"OTP displayed for {request.phone}: {otp_code}")
+    logger.info(f"OTP displayed for Aadhar {request.aadhar}: {otp_code}")
     
     return OTPResponse(
         otp_id=otp_id,
@@ -79,14 +79,14 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
 async def verify_otp_endpoint(request: OTPRequest, db: Session = Depends(get_db)):
     """Verify OTP and return JWT token."""
     # Verify OTP
-    if not verify_otp(request.otp_id, request.phone, request.otp_code):
+    if not verify_otp(request.otp_id, request.aadhar, request.otp_code):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired OTP"
         )
     
     # Get user
-    user = db.query(User).filter(User.phone == request.phone).first()
+    user = db.query(User).filter(User.aadhar == request.aadhar).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -94,7 +94,7 @@ async def verify_otp_endpoint(request: OTPRequest, db: Session = Depends(get_db)
         )
     
     # Create token
-    token = create_token_for_user(user.id, user.phone, RoleType(user.role.name))
+    token = create_token_for_user(user.id, user.aadhar, RoleType(user.role.name))
     
     return TokenResponse(
         access_token=token,

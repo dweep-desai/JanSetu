@@ -30,9 +30,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const login = async (phone: string) => {
+  const login = async (aadhar: string) => {
     try {
-      const response = await api.post('/auth/login', { phone });
+      const response = await api.post('/auth/login', { aadhar });
       return response.data;
     } catch (error: any) {
       console.error('Login error:', error);
@@ -44,10 +44,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const verifyOTP = async (phone: string, otpId: string, otpCode: string) => {
+  const verifyOTP = async (aadhar: string, otpId: string, otpCode: string) => {
     try {
       const response = await api.post('/auth/verify-otp', {
-        phone,
+        aadhar,
         otp_id: otpId,
         otp_code: otpCode,
       });

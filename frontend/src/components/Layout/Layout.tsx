@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {user && (
               <>
                 <span className="user-info">
-                  {user.role.name.replace('_', ' ')} - {user.phone}
+                  {user.role.name.replace('_', ' ')} - {user.aadhar}
                 </span>
                 <button onClick={logout} className="logout-btn">
                   Logout

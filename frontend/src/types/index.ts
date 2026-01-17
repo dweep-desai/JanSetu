@@ -1,6 +1,7 @@
 export interface User {
   id: number;
-  phone: string;
+  phone?: string;  // Optional for backward compatibility
+  aadhar: string;
   role: {
     id: number;
     name: 'CITIZEN' | 'SERVICE_PROVIDER' | 'ADMIN';
@@ -37,8 +38,8 @@ export interface ServiceOnboardingRequest {
 export interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (phone: string) => Promise<void>;
-  verifyOTP: (phone: string, otpId: string, otpCode: string) => Promise<void>;
+  login: (aadhar: string) => Promise<void>;
+  verifyOTP: (aadhar: string, otpId: string, otpCode: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
