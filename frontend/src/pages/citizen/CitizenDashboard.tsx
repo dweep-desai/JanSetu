@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import {
-  Heart, AlertTriangle, Train, Fuel,
+  Heart, AlertTriangle, Castle, Fuel,
   Bookmark, ChevronLeft, ChevronRight, Phone, Calculator,
   Star, Cloud, Wind, Droplets, Thermometer
 } from "lucide-react";
@@ -19,7 +19,7 @@ const QuickServices = () => {
   const services = [
     { title: "Health", icon: <Heart className="service-icon" />, gradient: "health", action: () => setIsHealthMenuOpen(true) },
     { title: "Emergency", icon: <AlertTriangle className="service-icon" />, gradient: "emergency", action: () => setIsEmergencyMenuOpen(true) },
-    { title: "Travel", icon: <Train className="service-icon" />, gradient: "travel" },
+    { title: "My City", icon: <Castle className="service-icon" />, gradient: "travel" },
     { title: "Utility", icon: <Fuel className="service-icon" />, gradient: "utility" },
   ];
 
