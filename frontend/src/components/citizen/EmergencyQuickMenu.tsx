@@ -45,7 +45,7 @@ const EmergencyQuickMenu: React.FC<EmergencyQuickMenuProps> = ({ isOpen, onClose
             title: "Call Ambulance",
             description: "Emergency Medical Support",
             icon: <Ambulance className="w-8 h-8 text-red-600" />,
-            action: () => handleCall('108'),
+            action: () => { onClose(); navigate('/citizen/health/call-ambulance'); },
             color: "bg-red-50 hover:bg-red-100 border-red-200"
         }
     ];
