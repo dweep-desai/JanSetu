@@ -4,6 +4,7 @@ import {
   Bookmark, ChevronLeft, ChevronRight, Phone, Calculator,
   Star, Cloud, Wind, Droplets, Thermometer
 } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './CitizenDashboard.css';
 
@@ -43,6 +44,7 @@ const Sidebar = () => {
 // Header Component
 const Header = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   
   // Get user initials for avatar
   const getUserInitials = () => {
@@ -59,6 +61,11 @@ const Header = () => {
       return `${user.aadhar.substring(0, 4)}...`;
     }
     return 'User';
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -93,7 +100,7 @@ const Header = () => {
           <div className="avatar">{getUserInitials()}</div>
           <span className="user-name">{getUserName()}</span>
         </div>
-        <button onClick={logout} className="icon-btn logout-btn" title="Logout">
+        <button onClick={handleLogout} className="icon-btn logout-btn" title="Logout">
           <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Logout</span>
         </button>
       </div>

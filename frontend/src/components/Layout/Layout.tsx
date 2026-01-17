@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 interface LayoutProps {
@@ -7,6 +8,12 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -20,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   {user.role.name.replace('_', ' ')} - {user.aadhar}
                 </span>
                 <button 
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="bg-white/20 hover:bg-white/30 border border-white/30 text-white px-4 py-2 rounded-md text-sm transition-colors"
                 >
                   Logout
