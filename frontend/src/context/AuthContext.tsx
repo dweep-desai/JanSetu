@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import api from '../services/api';
-import { User, AuthContextType } from '../types';
+import { User, AuthContextType, OTPResponse } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -30,9 +30,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const login = async (aadhar: string) => {
+  const login = async (aadhar: string): Promise<OTPResponse> => {
     try {
-      const response = await api.post('/auth/login', { aadhar });
+      const response = await api.post<OTPResponse>('/auth/login', { aadhar });
       return response.data;
     } catch (error: any) {
       console.error('Login error:', error);
@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         otp_code: otpCode,
       });
       
-      const { access_token, user_id, role } = response.data;
+      const { access_token } = response.data;
       setToken(access_token);
       localStorage.setItem('token', access_token);
       

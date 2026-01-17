@@ -2,6 +2,7 @@
    JanSetu Dashboard - Complete CSS File
    Copy this entire file to your project
    ============================================ */
+<<<<<<< HEAD
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -797,3 +798,798 @@
 .dashboard .h-4 { height: 1rem; }
 .dashboard .w-5 { width: 1.25rem; }
 .dashboard .h-5 { height: 1.25rem; }
+=======
+
+   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+   /* ============================================
+      CSS Variables (Design Tokens)
+      ============================================ */
+   
+   :root {
+     --background: #f8fafc;
+     --foreground: #1e293b;
+     --card: #ffffff;
+     --card-foreground: #1e293b;
+     --primary: #2563eb;
+     --primary-foreground: #ffffff;
+     --secondary: #f1f5f9;
+     --secondary-foreground: #1e293b;
+     --muted: #f1f5f9;
+     --muted-foreground: #64748b;
+     --accent: #eff6ff;
+     --accent-foreground: #1d4ed8;
+     --border: #e2e8f0;
+     --radius: 0.75rem;
+     
+     /* Sidebar */
+     --sidebar-bg: #ffffff;
+     --sidebar-foreground: #64748b;
+     --sidebar-active: #eff6ff;
+     --sidebar-active-text: #2563eb;
+     
+     /* Service Cards */
+     --health-start: #ec4899;
+     --health-end: #f472b6;
+     --emergency-start: #f97316;
+     --emergency-end: #fb923c;
+     --travel-start: #14b8a6;
+     --travel-end: #2dd4bf;
+     --utility-start: #22c55e;
+     --utility-end: #4ade80;
+     
+     /* Promo */
+     --promo-start: #2563eb;
+     --promo-end: #1d4ed8;
+   }
+   
+   /* ============================================
+      Reset & Base Styles
+      ============================================ */
+   
+   .dashboard * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+   }
+   
+   .dashboard {
+     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+     background-color: var(--background) !important;
+     color: var(--foreground) !important;
+     -webkit-font-smoothing: antialiased;
+     -moz-osx-font-smoothing: grayscale;
+     display: flex !important;
+     min-height: 100vh;
+     isolation: isolate;
+   }
+   
+   /* ============================================
+      Layout
+      ============================================ */
+   
+   .dashboard .main-container {
+     flex: 1;
+     display: flex !important;
+     flex-direction: column;
+   }
+   
+   .dashboard .main-content {
+     flex: 1;
+     padding: 1.5rem;
+     background-color: var(--background) !important;
+   }
+   
+   /* ============================================
+      Sidebar
+      ============================================ */
+   
+   .dashboard .sidebar {
+     width: 14rem !important;
+     background: var(--sidebar-bg) !important;
+     border-right: 1px solid var(--border) !important;
+     height: 100vh;
+     position: sticky;
+     top: 0;
+   }
+   
+   .dashboard .sidebar-nav {
+     padding: 1rem 0;
+   }
+   
+   .dashboard .nav-list {
+     list-style: none;
+     padding: 0 0.75rem;
+   }
+   
+   .dashboard .nav-list li {
+     margin-bottom: 0.25rem;
+   }
+   
+   .dashboard .nav-item {
+     display: flex !important;
+     align-items: center;
+     gap: 0.75rem;
+     padding: 0.75rem 1rem;
+     border-radius: 0.5rem;
+     text-decoration: none !important;
+     font-size: 0.875rem;
+     font-weight: 500;
+     color: var(--sidebar-foreground) !important;
+     transition: all 0.2s ease;
+     cursor: pointer;
+   }
+   
+   .dashboard .nav-item:hover {
+     background: var(--sidebar-active) !important;
+     color: var(--sidebar-active-text) !important;
+   }
+   
+   .dashboard .nav-item.active {
+     background: var(--sidebar-active) !important;
+     color: var(--sidebar-active-text) !important;
+   }
+   
+   .dashboard .nav-icon {
+     width: 1.25rem;
+     height: 1.25rem;
+   }
+   
+   /* ============================================
+      Header
+      ============================================ */
+   
+   .dashboard .header {
+     display: flex !important;
+     align-items: center;
+     justify-content: space-between;
+     padding: 0.75rem 1.5rem;
+     background: var(--card) !important;
+     border-bottom: 1px solid var(--border) !important;
+     position: sticky;
+     top: 0;
+     z-index: 50;
+   }
+   
+   .dashboard .header-left {
+     display: flex;
+     align-items: center;
+     gap: 1rem;
+   }
+   
+   .dashboard .logo {
+     display: flex;
+     align-items: center;
+     gap: 0.5rem;
+   }
+   
+   .dashboard .logo-icon {
+     width: 2rem;
+     height: 2rem;
+     background: linear-gradient(135deg, #f97316, #ea580c);
+     border-radius: 0.5rem;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     color: white;
+     font-weight: 700;
+     font-size: 0.875rem;
+   }
+   
+   .dashboard .logo-text {
+     font-weight: 700;
+     font-size: 1.125rem;
+     color: var(--primary);
+   }
+   
+   .dashboard .search-container {
+     flex: 1;
+     max-width: 32rem;
+     margin: 0 2rem;
+   }
+   
+   .dashboard .search-box {
+     position: relative;
+   }
+   
+   .dashboard .search-icon {
+     position: absolute;
+     left: 0.75rem;
+     top: 50%;
+     transform: translateY(-50%);
+     width: 1rem;
+     height: 1rem;
+     color: var(--muted-foreground);
+   }
+   
+   .dashboard .search-input {
+     width: 100%;
+     padding: 0.625rem 1rem 0.625rem 2.5rem;
+     background: var(--secondary);
+     border: none;
+     border-radius: 9999px;
+     font-size: 0.875rem;
+     font-family: inherit;
+     outline: none;
+     transition: box-shadow 0.2s ease;
+   }
+   
+   .dashboard .search-input:focus {
+     box-shadow: 0 0 0 2px var(--primary);
+   }
+   
+   .dashboard .search-input::placeholder {
+     color: var(--muted-foreground);
+   }
+   
+   .dashboard .header-right {
+     display: flex;
+     align-items: center;
+     gap: 0.75rem;
+   }
+   
+   .dashboard .icon-btn {
+     width: 2.5rem;
+     height: 2.5rem;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     background: transparent;
+     border: none;
+     border-radius: 50%;
+     color: var(--muted-foreground);
+     cursor: pointer;
+     transition: background 0.2s ease;
+   }
+   
+   .dashboard .icon-btn:hover {
+     background: var(--muted);
+   }
+   
+   .dashboard .icon-btn.logout-btn {
+     width: auto;
+     padding: 0.5rem 1rem;
+     border-radius: 0.5rem;
+     margin-left: 0.5rem;
+   }
+   
+   .dashboard .user-info {
+     display: flex;
+     align-items: center;
+     gap: 0.5rem;
+     margin-left: 0.5rem;
+   }
+   
+   .dashboard .avatar {
+     width: 2rem;
+     height: 2rem;
+     background: var(--primary);
+     color: var(--primary-foreground);
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 0.75rem;
+     font-weight: 600;
+   }
+   
+   .dashboard .user-name {
+     font-size: 0.875rem;
+     font-weight: 500;
+   }
+   
+   /* ============================================
+      Sections
+      ============================================ */
+   
+   .dashboard .section {
+     margin-bottom: 2rem;
+   }
+   
+   .dashboard .section-header {
+     display: flex;
+     align-items: center;
+     gap: 0.5rem;
+     margin-bottom: 1rem;
+   }
+   
+   .dashboard .section-icon {
+     width: 1.25rem;
+     height: 1.25rem;
+   }
+   
+   .dashboard .section-icon.pink {
+     color: #ec4899;
+   }
+   
+   .dashboard .section-icon.orange {
+     color: #f97316;
+   }
+   
+   .dashboard .section-title {
+     font-size: 1.125rem;
+     font-weight: 600;
+     color: var(--foreground);
+   }
+   
+   .dashboard .nav-arrows {
+     display: flex;
+     gap: 0.5rem;
+     margin-left: auto;
+   }
+   
+   .dashboard .arrow-btn {
+     width: 2rem;
+     height: 2rem;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     background: transparent;
+     border: none;
+     border-radius: 0.5rem;
+     color: var(--muted-foreground);
+     cursor: pointer;
+     transition: background 0.2s ease;
+   }
+   
+   .dashboard .arrow-btn:hover {
+     background: var(--muted);
+   }
+   
+   /* ============================================
+      Quick Services
+      ============================================ */
+   
+   .dashboard .services-grid {
+     display: grid;
+     grid-template-columns: repeat(4, 1fr);
+     gap: 1rem;
+   }
+   
+   .dashboard .service-card {
+     border-radius: 1rem;
+     padding: 1.25rem;
+     height: 9rem;
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+     cursor: pointer;
+     transition: transform 0.2s ease;
+     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+   }
+   
+   .dashboard .service-card:hover {
+     transform: scale(1.02);
+   }
+   
+   .dashboard .service-card.health {
+     background: linear-gradient(135deg, var(--health-start), var(--health-end));
+   }
+   
+   .dashboard .service-card.emergency {
+     background: linear-gradient(135deg, var(--emergency-start), var(--emergency-end));
+   }
+   
+   .dashboard .service-card.travel {
+     background: linear-gradient(135deg, var(--travel-start), var(--travel-end));
+   }
+   
+   .dashboard .service-card.utility {
+     background: linear-gradient(135deg, var(--utility-start), var(--utility-end));
+   }
+   
+   .dashboard .service-title {
+     color: white;
+     font-weight: 600;
+     font-size: 1.125rem;
+   }
+   
+   .dashboard .service-icon-container {
+     align-self: flex-end;
+   }
+   
+   .dashboard .service-icon {
+     width: 3rem;
+     height: 3rem;
+     color: rgba(255, 255, 255, 0.9);
+   }
+   
+   .dashboard .dots {
+     display: flex;
+     justify-content: center;
+     gap: 0.375rem;
+     margin-top: 1rem;
+   }
+   
+   .dashboard .dot {
+     width: 0.5rem;
+     height: 0.5rem;
+     border-radius: 50%;
+     background: var(--muted);
+   }
+   
+   .dashboard .dot.active {
+     background: var(--primary);
+   }
+   
+   /* ============================================
+      Recent Services
+      ============================================ */
+   
+   .dashboard .recent-grid {
+     display: grid;
+     grid-template-columns: repeat(4, 1fr);
+     gap: 1rem;
+   }
+   
+   .dashboard .recent-card {
+     display: flex;
+     align-items: center;
+     gap: 0.75rem;
+     padding: 1rem;
+     background: var(--card);
+     border: 1px solid var(--border);
+     border-radius: 0.75rem;
+     cursor: pointer;
+     transition: box-shadow 0.2s ease;
+   }
+   
+   .dashboard .recent-card:hover {
+     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+   }
+   
+   .dashboard .recent-icon {
+     width: 3rem;
+     height: 3rem;
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 1.5rem;
+     flex-shrink: 0;
+   }
+   
+   .dashboard .recent-icon.blue { background: #dbeafe; }
+   .dashboard .recent-icon.green { background: #dcfce7; }
+   .dashboard .recent-icon.teal { background: #ccfbf1; }
+   .dashboard .recent-icon.pink { background: #fce7f3; }
+   
+   .dashboard .recent-info {
+     flex: 1;
+     min-width: 0;
+   }
+   
+   .dashboard .recent-name {
+     font-weight: 500;
+     font-size: 0.875rem;
+     color: var(--foreground);
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     margin: 0;
+   }
+   
+   .dashboard .recent-category {
+     font-size: 0.75rem;
+     color: var(--muted-foreground);
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     margin: 0;
+   }
+   
+   .dashboard .bookmark-btn {
+     background: transparent;
+     border: none;
+     color: var(--muted-foreground);
+     cursor: pointer;
+     padding: 0.25rem;
+     transition: color 0.2s ease;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+   }
+   
+   .dashboard .bookmark-btn:hover {
+     color: var(--primary);
+   }
+   
+   /* ============================================
+      Helpline Categories
+      ============================================ */
+   
+   .dashboard .helpline-grid {
+     display: flex;
+     gap: 1rem;
+     overflow-x: auto;
+     padding-bottom: 0.5rem;
+   }
+   
+   .dashboard .helpline-item {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 0.5rem;
+     min-width: 5rem;
+     cursor: pointer;
+   }
+   
+   .dashboard .helpline-item:hover .helpline-icon {
+     border-color: var(--primary);
+     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+   }
+   
+   .dashboard .helpline-icon {
+     width: 4rem;
+     height: 4rem;
+     background: var(--card);
+     border: 1px solid var(--border);
+     border-radius: 0.75rem;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 1.875rem;
+     transition: all 0.2s ease;
+   }
+   
+   .dashboard .helpline-label {
+     font-size: 0.875rem;
+     color: var(--muted-foreground);
+     text-align: center;
+   }
+   
+   /* ============================================
+      Promo Cards Grid
+      ============================================ */
+   
+   .dashboard .promo-grid {
+     display: grid;
+     grid-template-columns: repeat(2, 1fr);
+     gap: 1.5rem;
+   }
+   
+   /* ============================================
+      Weather & AQI Card
+      ============================================ */
+   
+   .dashboard .weather-card {
+     background: var(--card);
+     border: 1px solid var(--border);
+     border-radius: 1rem;
+     padding: 1.5rem;
+   }
+   
+   .dashboard .weather-header {
+     display: flex;
+     align-items: center;
+     gap: 0.5rem;
+     margin-bottom: 1rem;
+   }
+   
+   .dashboard .weather-cloud-icon {
+     width: 1.5rem;
+     height: 1.5rem;
+     color: var(--primary);
+   }
+   
+   .dashboard .weather-location {
+     font-weight: 600;
+     color: var(--foreground);
+   }
+   
+   .dashboard .weather-main {
+     display: flex;
+     align-items: center;
+     gap: 1rem;
+     margin-bottom: 1rem;
+   }
+   
+   .dashboard .temperature {
+     display: flex;
+     align-items: center;
+     gap: 0.5rem;
+     color: var(--primary);
+   }
+   
+   .dashboard .temp-icon {
+     width: 2rem;
+     height: 2rem;
+   }
+   
+   .dashboard .temp-value {
+     font-size: 2rem;
+     font-weight: 700;
+   }
+   
+   .dashboard .weather-condition {
+     font-size: 0.875rem;
+     color: var(--muted-foreground);
+   }
+   
+   .dashboard .weather-details {
+     display: flex;
+     gap: 1.5rem;
+     margin-bottom: 1.25rem;
+     padding-bottom: 1.25rem;
+     border-bottom: 1px solid var(--border);
+   }
+   
+   .dashboard .weather-detail {
+     display: flex;
+     align-items: center;
+     gap: 0.5rem;
+     font-size: 0.875rem;
+     color: var(--muted-foreground);
+   }
+   
+   .dashboard .detail-icon {
+     width: 1rem;
+     height: 1rem;
+   }
+   
+   .dashboard .aqi-section {
+     display: flex;
+     flex-direction: column;
+     gap: 0.5rem;
+   }
+   
+   .dashboard .aqi-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+   }
+   
+   .dashboard .aqi-label {
+     font-size: 0.875rem;
+     font-weight: 500;
+     color: var(--foreground);
+   }
+   
+   .dashboard .aqi-value {
+     font-weight: 700;
+     font-size: 1.25rem;
+     padding: 0.25rem 0.75rem;
+     border-radius: 0.5rem;
+   }
+   
+   .dashboard .aqi-value.moderate {
+     background: #fef3c7;
+     color: #d97706;
+   }
+   
+   .dashboard .aqi-value.good {
+     background: #dcfce7;
+     color: #16a34a;
+   }
+   
+   .dashboard .aqi-value.unhealthy {
+     background: #fee2e2;
+     color: #dc2626;
+   }
+   
+   .dashboard .aqi-bar {
+     height: 0.5rem;
+     background: #e5e7eb;
+     border-radius: 9999px;
+     overflow: hidden;
+   }
+   
+   .dashboard .aqi-fill {
+     height: 100%;
+     background: linear-gradient(90deg, #22c55e, #eab308, #f97316);
+     border-radius: 9999px;
+     transition: width 0.3s ease;
+   }
+   
+   .dashboard .aqi-status {
+     font-size: 0.75rem;
+     color: #d97706;
+   }
+   
+   /* ============================================
+      Financial Calculator Card
+      ============================================ */
+   
+   .dashboard .financial-card {
+     background: linear-gradient(135deg, var(--promo-start), var(--promo-end));
+     border-radius: 1rem;
+     padding: 1.5rem;
+     position: relative;
+     overflow: hidden;
+     color: white;
+   }
+   
+   .dashboard .financial-overlay {
+     position: absolute;
+     inset: 0;
+     background: linear-gradient(135deg, transparent, rgba(0, 0, 0, 0.2));
+   }
+   
+   .dashboard .financial-content {
+     position: relative;
+     z-index: 10;
+   }
+   
+   .dashboard .calculator-icon {
+     width: 1.5rem;
+     height: 1.5rem;
+   }
+   
+   .dashboard .financial-title {
+     font-size: 1.5rem;
+     font-weight: 700;
+     margin: 0.5rem 0;
+   }
+   
+   .dashboard .financial-desc {
+     color: rgba(255, 255, 255, 0.8);
+     margin-bottom: 1rem;
+     font-size: 0.875rem;
+   }
+   
+   .dashboard .calculate-btn {
+     background: white;
+     color: var(--primary);
+     border: none;
+     padding: 0.625rem 1.25rem;
+     border-radius: 0.5rem;
+     font-weight: 600;
+     font-size: 0.875rem;
+     font-family: inherit;
+     cursor: pointer;
+     transition: background 0.2s ease;
+   }
+   
+   .dashboard .calculate-btn:hover {
+     background: #f8fafc;
+   }
+   
+   /* ============================================
+      Responsive Design
+      ============================================ */
+   
+   @media (max-width: 1280px) {
+     .dashboard .services-grid,
+     .dashboard .recent-grid {
+       grid-template-columns: repeat(2, 1fr);
+     }
+   }
+   
+   @media (max-width: 1024px) {
+     .dashboard .promo-grid {
+       grid-template-columns: 1fr;
+     }
+   }
+   
+   @media (max-width: 768px) {
+     .dashboard .sidebar {
+       display: none;
+     }
+     
+     .dashboard .services-grid,
+     .dashboard .recent-grid {
+       grid-template-columns: 1fr;
+     }
+     
+     .dashboard .search-container {
+       display: none;
+     }
+     
+     .dashboard .user-name {
+       display: none;
+     }
+     
+     .dashboard .main-content {
+       padding: 1rem;
+     }
+   }
+   
+   /* ============================================
+      Utility Classes
+      ============================================ */
+   
+   .dashboard .w-4 { width: 1rem; }
+   .dashboard .h-4 { height: 1rem; }
+   .dashboard .w-5 { width: 1.25rem; }
+   .dashboard .h-5 { height: 1.25rem; }
+>>>>>>> 3bc895a67d0371dc2ffc50397313a82c9a52252a

@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { Toaster } from '@/components/ui/toaster';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import Landing from './pages/Landing';
 import LoginPage from './pages/Auth/LoginPage';
 import CitizenDashboard from './pages/citizen/CitizenDashboard';
 import ProviderDashboard from './pages/provider/ProviderDashboard';
@@ -28,10 +31,15 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" replace />} />
+      {/* Landing page - public */}
+      <Route path="/" element={<Landing />} />
       
+      {/* Login page */}
+      <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" replace />} />
+      
+      {/* Dashboard route - redirects based on role */}
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <ProtectedRoute>
             {user?.role.name === 'CITIZEN' && <CitizenDashboard />}
@@ -86,9 +94,12 @@ const AppRoutes = () => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
+      <TooltipProvider>
+        <Toaster />
+        <Router>
+          <AppRoutes />
+        </Router>
+      </TooltipProvider>
     </AuthProvider>
   );
 }

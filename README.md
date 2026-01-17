@@ -2,6 +2,14 @@
 
 A comprehensive unified digital public infrastructure platform inspired by India's UMANG portal, designed to demonstrate how multiple government services can be onboarded, managed, accessed, and monitored through a single core platform.
 
+## 🚀 Quick Start for New Developers
+
+**If you just cloned this repository, start here:** See [SETUP.md](SETUP.md) for complete setup instructions including:
+- Virtual environment setup
+- Database initialization
+- Environment variable configuration
+- Troubleshooting common issues
+
 ## Table of Contents
 
 - [Architecture Overview](#architecture-overview)
@@ -57,7 +65,7 @@ The platform follows a **core + pluggable services** architecture:
 
 1. **Identity & Authentication**
    - JWT-based authentication
-   - Simulated Aadhaar-style OTP login (phone number + OTP)
+   - Aadhar card-based OTP login (Aadhar number + OTP)
    - Role-based access control (Citizen, Service Provider, Admin)
 
 2. **Service Registry & Onboarding**
@@ -157,26 +165,59 @@ JanSetu/
 
 ### Backend Setup
 
+**⚠️ IMPORTANT: For new developers, see [SETUP.md](SETUP.md) for detailed setup instructions including virtual environment setup.**
+
 1. **Navigate to backend directory:**
    ```bash
    cd backend
    ```
 
-2. **Install dependencies:**
+2. **Create and activate virtual environment (REQUIRED):**
    ```bash
+   # Windows
+   python -m venv venv
+   venv\Scripts\activate
+   
+   # macOS/Linux
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   pip install --upgrade pip
    pip install -r requirements.txt
    ```
 
-3. **Set up environment variables:**
-   Create a `.env` file in the `backend` directory:
+4. **Set up environment variables:**
+   Create a `.env` file in the `backend` directory (copy from `.env.example` if it exists):
+   ```bash
+   # Windows
+   copy .env.example .env
+   # macOS/Linux
+   cp .env.example .env
+   ```
+   
+   Edit `.env` and configure:
    ```env
-   DATABASE_URL=postgresql://postgres:postgres@localhost:5432/jansetu
+   DATABASE_URL=sqlite:///./jansetu.db
    REDIS_URL=redis://localhost:6379/0
    JWT_SECRET_KEY=your-secret-key-change-in-production
    CORS_ORIGINS=["http://localhost:3000","http://localhost:5173"]
    ```
 
-4. **Run with Docker Compose (Recommended):**
+5. **Initialize database:**
+   ```bash
+   python init_db.py
+   ```
+
+6. **Start backend server:**
+   ```bash
+   # Make sure virtual environment is activated
+   python -m uvicorn jansetu_platform.main:app --reload --host 0.0.0.0 --port 8000
+   ```
+
+   **Alternative: Run with Docker Compose (Optional):**
    ```bash
    cd ..
    docker-compose up -d
@@ -189,12 +230,6 @@ JanSetu/
    - Healthcare service (port 8001)
    - Agriculture service (port 8002)
    - Grievance service (port 8003)
-
-5. **Initialize database:**
-   The database tables are created automatically on first run.
-
-6. **Create initial roles:**
-   You may need to seed initial roles (CITIZEN, SERVICE_PROVIDER, ADMIN) in the database.
 
 ### Frontend Setup
 
@@ -212,9 +247,19 @@ JanSetu/
 
 3. **Set up environment variables:**
    Create a `.env` file in the `frontend` directory:
+   ```bash
+   # Windows
+   copy .env.example .env
+   # macOS/Linux
+   cp .env.example .env
+   ```
+   
+   Edit `.env` and set:
    ```env
    VITE_API_BASE_URL=http://localhost:8000
    ```
+   
+   **⚠️ IMPORTANT:** Make sure the backend is running before starting the frontend!
 
 4. **Run development server:**
    ```bash
@@ -229,7 +274,7 @@ JanSetu/
 
 ### Authentication Endpoints
 
-- `POST /auth/login` - Generate OTP for phone number
+- `POST /auth/login` - Generate OTP for Aadhar card number
 - `POST /auth/verify-otp` - Verify OTP and get JWT token
 - `GET /auth/me` - Get current user information
 
@@ -271,7 +316,7 @@ FastAPI provides automatic interactive API documentation:
 ### 1. Service Provider Onboarding
 
 1. **Login as Service Provider:**
-   - Use phone number to login
+   - Use Aadhar card number to login (e.g., ABC123456789)
    - Verify OTP
    - Role should be SERVICE_PROVIDER (you may need to update user role in database)
 
@@ -294,7 +339,7 @@ FastAPI provides automatic interactive API documentation:
 ### 2. Citizen Access
 
 1. **Login as Citizen:**
-   - Use phone number to login
+   - Use Aadhar card number to login (e.g., ABC123456789)
    - Verify OTP
 
 2. **Browse Services:**
@@ -378,7 +423,7 @@ If APPROVED → Service.status = ACTIVE → Available in gateway
 
 ### Database Schema
 
-- **Users**: Phone-based authentication with roles
+- **Users**: Aadhar-based authentication with roles
 - **Services**: Service registry with status tracking
 - **ServiceOnboardingRequest**: Onboarding workflow management
 - **RequestLog**: Observability and metrics
@@ -389,6 +434,7 @@ If APPROVED → Service.status = ACTIVE → Available in gateway
 - Services use SQLite for simplicity (can be upgraded to PostgreSQL)
 - Mock services attempt self-registration on startup
 - All inter-service communication goes through the platform gateway
+- **Login uses Aadhar card numbers** (format: ABC123456789) instead of phone numbers
 
 ## License
 

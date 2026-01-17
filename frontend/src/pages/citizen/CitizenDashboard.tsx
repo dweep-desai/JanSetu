@@ -244,6 +244,56 @@ const WeatherAQICard = () => {
         </div>
         <span className="aqi-status">Moderate - Unhealthy for sensitive groups</span>
       </div>
+<<<<<<< HEAD
+    </div>
+  );
+};
+
+// Financial Calculator Card Component
+const FinancialCalculatorCard = () => {
+  return (
+    <div className="financial-card">
+      <div className="financial-overlay"></div>
+      <div className="financial-content">
+        <Calculator className="calculator-icon" />
+        <h3 className="financial-title">Financial Calculator</h3>
+        <p className="financial-desc">
+          Get instant insights to make smarter money calculations.
+        </p>
+        <button className="calculate-btn">Calculate Now</button>
+      </div>
+    </div>
+  );
+};
+
+// Promo Cards Component
+const PromoCards = () => {
+  return (
+    <div className="promo-grid">
+      <WeatherAQICard />
+      <FinancialCalculatorCard />
+    </div>
+  );
+};
+
+// ============================================
+// Main Dashboard Component - Export This
+// ============================================
+const CitizenDashboard = () => {
+  return (
+    <div className="dashboard">
+      <Sidebar />
+      <div className="main-container">
+        <Header />
+        <main className="main-content">
+          <QuickServices />
+          <RecentServices />
+          <HelplineCategories />
+          <PromoCards />
+        </main>
+      </div>
+=======
+>>>>>>> 3bc895a67d0371dc2ffc50397313a82c9a52252a
     </div>
   );
 };

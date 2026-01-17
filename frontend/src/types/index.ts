@@ -35,10 +35,16 @@ export interface ServiceOnboardingRequest {
   updated_at: string | null;
 }
 
+export interface OTPResponse {
+  otp_id: string;
+  message: string;
+  expires_in: number;
+}
+
 export interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (aadhar: string) => Promise<void>;
+  login: (aadhar: string) => Promise<OTPResponse>;
   verifyOTP: (aadhar: string, otpId: string, otpCode: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
