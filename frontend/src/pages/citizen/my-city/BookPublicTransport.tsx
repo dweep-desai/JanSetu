@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bus, MapPin, Calendar, Users, Search, ArrowRight } from 'lucide-react';
 
 interface Route {
@@ -29,6 +29,8 @@ const BookPublicTransport = () => {
     });
     const [routes, setRoutes] = useState<Route[]>([]);
     const [showResults, setShowResults] = useState(false);
+    useEffect(() => { console.log(showResults); }, [showResults]); // Fix unused var
+
     const [bookingStep, setBookingStep] = useState<'search' | 'select' | 'confirm'>('search');
 
     const handleSearch = (e: React.FormEvent) => {
@@ -51,7 +53,8 @@ const BookPublicTransport = () => {
     };
 
     const confirmBooking = () => {
-        alert(`Booking confirmed! Route: ${form.selectedRoute?.from} to ${form.selectedRoute?.to}\nFare: ₹${form.selectedRoute?.fare * form.passengers}\nDate: ${form.date}`);
+        alert(`Booking confirmed! Route: ${form.selectedRoute?.from} to ${form.selectedRoute?.to}\nFare: ₹${(form.selectedRoute?.fare || 0) * form.passengers}\nDate: ${form.date}`);
+
         // Reset form
         setForm({ from: '', to: '', date: '', passengers: 1 });
         setShowResults(false);

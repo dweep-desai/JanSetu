@@ -13,7 +13,7 @@ const Sidebar = () => {
     const navItems = [
         { icon: <Home className="nav-icon" />, label: "myJanSetu", path: "/citizen", isLink: true },
         { icon: <Grid3X3 className="nav-icon" />, label: "Services", path: "/citizen/services", isLink: true },
-        { icon: <FileText className="nav-icon" />, label: "DigiLocker", path: "#", isLink: false },
+        { icon: <FileText className="nav-icon" />, label: "DigiLocker", path: "/citizen/digilocker", isLink: true },
         { icon: <MapPin className="nav-icon" />, label: "State", path: "#", isLink: false },
         { icon: <BookOpen className="nav-icon" />, label: "Schemes", path: "/citizen/schemes", isLink: true },
         { icon: <LayoutDashboard className="nav-icon" />, label: "Dashboard", path: "/citizen", isLink: true },

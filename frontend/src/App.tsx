@@ -41,7 +41,11 @@ import NTA from './pages/citizen/education/NTA';
 import PetrolStationsNearMe from './pages/citizen/transport/PetrolStationsNearMe';
 import FuelPrices from './pages/citizen/transport/FuelPrices';
 
+// DigiLocker
+import DigiLockerPage from './pages/citizen/digilocker/DigiLockerPage';
+
 // Other pages
+
 import Schemes from './pages/citizen/Schemes';
 
 import ProviderDashboard from './pages/provider/ProviderDashboard';
@@ -108,7 +112,7 @@ const AppRoutes = () => {
       >
         <Route index element={<CitizenDashboard />} />
         <Route path="services" element={<Services />} />
-        
+
         {/* Health routes */}
         <Route path="health/medical-stores-near-me" element={<MedicalStoresNearMe />} />
         <Route path="health/hospitals-near-me" element={<HospitalsNearMe />} />
@@ -117,34 +121,38 @@ const AppRoutes = () => {
         <Route path="health/patient-report" element={<PatientHealthReport />} />
         <Route path="health/e-sanjeevani" element={<ESanjeevani />} />
         <Route path="health/blood-bank" element={<BloodBank />} />
-        
+
         {/* Emergency routes */}
         <Route path="emergency/police-stations-near-me" element={<PoliceStationsNearMe />} />
-        
+
         {/* My City routes */}
         <Route path="my-city/traffic" element={<TrafficUpdates />} />
         <Route path="my-city/weather" element={<WeatherInfo />} />
         <Route path="my-city/complaints" element={<Complaints />} />
         <Route path="my-city/book-transport" element={<BookPublicTransport />} />
-        
+
         {/* Agriculture routes */}
         <Route path="agriculture/market-availability" element={<MarketAvailability />} />
         <Route path="agriculture/check-msp" element={<CheckMSP />} />
         <Route path="agriculture/agri-supply-exchange" element={<AgriSupplyExchange />} />
         <Route path="agriculture/mkisaan" element={<Mkisaan />} />
-        
+
         {/* Education routes */}
         <Route path="education/download-marksheet" element={<DownloadMarksheet />} />
         <Route path="education/abc-id" element={<ABCId />} />
         <Route path="education/aicte" element={<AICTE />} />
         <Route path="education/nta" element={<NTA />} />
-        
+
         {/* Transport routes */}
         <Route path="transport/petrol-stations-near-me" element={<PetrolStationsNearMe />} />
         <Route path="transport/fuel-prices" element={<FuelPrices />} />
-        
+
+        {/* DigiLocker */}
+        <Route path="digilocker" element={<DigiLockerPage />} />
+
         {/* Other routes */}
         <Route path="schemes" element={<Schemes />} />
+
       </Route>
 
 

@@ -22,7 +22,13 @@ interface JanSetuApi extends AxiosInstance {
   getAgricultureProducts: (query?: string) => Promise<any>;
   getMarketAvailability: (product?: string, location?: string) => Promise<any>;
   getFuelPrices: () => Promise<any>;
+  // DigiLocker
+  linkDigiLocker: (digilockerId: string) => Promise<any>;
+  getMyDocuments: () => Promise<any>;
+  fetchDocument: (docType: string, issuer: string, params: any) => Promise<any>;
 }
+
+
 
 
 const api = axios.create({
@@ -99,12 +105,12 @@ api.getNearbyPetrolStations = async (lat: number, lng: number) => {
       );
       out center meta;
     `;
-    
+
     const response = await axios.post(overpassUrl, query, {
       headers: { 'Content-Type': 'text/plain' },
       timeout: 10000 // 10 second timeout
     });
-    
+
     if (response.data && response.data.elements && response.data.elements.length > 0) {
       return response.data.elements.map((element: any, index: number) => {
         const center = element.center || { lat: element.lat, lon: element.lon };
@@ -143,7 +149,7 @@ function getDefaultPetrolStations(lat: number, lng: number) {
     { name: 'Reliance Petrol Station', address: 'Dwarka, New Delhi', phone: '011-23345681', offsetLat: -0.005, offsetLng: 0.004, fuelTypes: ['Petrol', 'Diesel'] },
     { name: 'Shell Petrol Pump', address: 'Gurgaon Road, New Delhi', phone: '011-23345682', offsetLat: 0.008, offsetLng: 0.001, fuelTypes: ['Petrol', 'Diesel', 'Premium'] },
   ];
-  
+
   return stations.map((station, index) => ({
     id: `petrol-${index + 1}`,
     name: station.name,
@@ -268,7 +274,26 @@ api.getFuelPrices = async () => {
   }
 };
 
+// DigiLocker Services
+api.linkDigiLocker = (digilockerId: string) => {
+  return api.post('/api/digilocker/link', { digilockerId, user_id: 1 }).then((res: AxiosResponse) => res.data); // Mock user_id 1
+};
+
+api.getMyDocuments = () => {
+  return api.get('/api/digilocker/my-documents?user_id=1').then((res: AxiosResponse) => res.data);
+};
+
+api.fetchDocument = (docType: string, issuer: string, params: any) => {
+  return api.post('/api/digilocker/fetch', {
+    user_id: 1,
+    doc_type: docType,
+    issuer,
+    params
+  }).then((res: AxiosResponse) => res.data);
+};
+
 // Helper function to calculate distance
+
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): string {
   const R = 6371; // Radius of the earth in km
   const dLat = deg2rad(lat2 - lat1);

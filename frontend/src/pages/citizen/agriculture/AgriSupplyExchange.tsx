@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TrendingUp, TrendingDown, Search, Package, MapPin } from 'lucide-react';
 
 interface SupplyData {
@@ -19,7 +19,7 @@ const AgriSupplyExchange = () => {
 
     const categories = ['all', 'Cereals', 'Vegetables', 'Fruits', 'Oilseeds', 'Pulses'];
 
-    const [supplyData, setSupplyData] = useState<SupplyData[]>([
+    const [supplyData] = useState<SupplyData[]>([
         { id: '1', product: 'Wheat', category: 'Cereals', quantity: '5000 Quintals', price: 2100, location: 'Delhi', supplier: 'Farmers Cooperative', trend: 'up', lastUpdated: '2024-01-20' },
         { id: '2', product: 'Rice', category: 'Cereals', quantity: '3000 Quintals', price: 3200, location: 'Punjab', supplier: 'State Marketing Board', trend: 'stable', lastUpdated: '2024-01-20' },
         { id: '3', product: 'Tomato', category: 'Vegetables', quantity: '200 Tons', price: 40, location: 'Haryana', supplier: 'Farm Direct', trend: 'down', lastUpdated: '2024-01-20' },
@@ -30,7 +30,7 @@ const AgriSupplyExchange = () => {
 
     const filteredData = supplyData.filter(item => {
         const matchesSearch = item.product.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            item.location.toLowerCase().includes(searchQuery.toLowerCase());
+            item.location.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Calculator, TrendingUp, Info } from 'lucide-react';
+import { Search, Calculator, Info } from 'lucide-react';
 import api from '../../../services/api';
 
 interface MSPData {
@@ -176,38 +176,38 @@ const CheckMSP = () => {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {filteredData.length > 0 ? (
-                                filteredData.map((item) => (
-                                    <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">{item.crop}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
-                                                {item.category}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
-                                            ₹{item.msp2023}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <div className="text-sm font-bold text-gray-900">₹{item.msp2024}</div>
-                                        </td>
-                                        <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${getChangeColor(item.change)}`}>
-                                            {item.change > 0 ? '+' : ''}{item.change}%
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {item.unit}
+                                    filteredData.map((item) => (
+                                        <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-medium text-gray-900">{item.crop}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+                                                    {item.category}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
+                                                ₹{item.msp2023}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                                                <div className="text-sm font-bold text-gray-900">₹{item.msp2024}</div>
+                                            </td>
+                                            <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${getChangeColor(item.change)}`}>
+                                                {item.change > 0 ? '+' : ''}{item.change}%
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {item.unit}
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                            <Calculator className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                                            <p>No crops found matching your search.</p>
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                                        <Calculator className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                                        <p>No crops found matching your search.</p>
-                                    </td>
-                                </tr>
-                            )}
+                                )}
                             </tbody>
                         </table>
                     </div>

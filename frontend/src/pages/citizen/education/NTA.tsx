@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FileCheck, Search, Calendar, ClipboardList } from 'lucide-react';
+import { useState } from 'react';
+import { FileCheck, Search } from 'lucide-react';
 
 interface Exam {
     id: string;
@@ -13,7 +13,7 @@ interface Exam {
 
 const NTA = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [exams, setExams] = useState<Exam[]>([
+    const [exams] = useState<Exam[]>([
         { id: '1', name: 'JEE Main 2024', category: 'Engineering', registrationStart: '2024-01-01', registrationEnd: '2024-01-31', examDate: '2024-04-15', status: 'Open' },
         { id: '2', name: 'NEET 2024', category: 'Medical', registrationStart: '2024-02-01', registrationEnd: '2024-03-15', examDate: '2024-05-05', status: 'Open' },
         { id: '3', name: 'CUET 2024', category: 'University Entrance', registrationStart: '2024-02-15', registrationEnd: '2024-03-30', examDate: '2024-05-21', status: 'Open' },

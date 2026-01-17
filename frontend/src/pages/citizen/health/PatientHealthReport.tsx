@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FileText, Download, Calendar, Activity, Heart, Stethoscope } from 'lucide-react';
 
 interface HealthRecord {
@@ -12,7 +12,7 @@ interface HealthRecord {
 }
 
 const PatientHealthReport = () => {
-    const [records, setRecords] = useState<HealthRecord[]>([
+    const [records] = useState<HealthRecord[]>([
         { id: '1', date: '2024-01-15', type: 'Lab Report', hospital: 'AIIMS Delhi', description: 'Complete Blood Count (CBC)', fileUrl: '#' },
         { id: '2', date: '2024-01-10', type: 'Prescription', doctor: 'Dr. Sharma', hospital: 'Apollo Hospital', description: 'General Checkup - Fever & Cold', fileUrl: '#' },
         { id: '3', date: '2023-12-20', type: 'Vaccination', hospital: 'Government Hospital', description: 'COVID-19 Booster Dose', fileUrl: '#' },

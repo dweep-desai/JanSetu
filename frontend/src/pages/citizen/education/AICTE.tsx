@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { School, Search, FileText, GraduationCap } from 'lucide-react';
+import { useState } from 'react';
+import { School, Search } from 'lucide-react';
 
 interface Institution {
     id: string;
@@ -12,7 +12,7 @@ interface Institution {
 
 const AICTE = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [institutions, setInstitutions] = useState<Institution[]>([
+    const [institutions] = useState<Institution[]>([
         { id: '1', name: 'IIT Delhi', type: 'Engineering', location: 'New Delhi', status: 'Approved', programs: ['B.Tech', 'M.Tech', 'PhD'] },
         { id: '2', name: 'NIT Delhi', type: 'Engineering', location: 'New Delhi', status: 'Approved', programs: ['B.Tech', 'M.Tech'] },
         { id: '3', name: 'DTU', type: 'Engineering', location: 'New Delhi', status: 'Approved', programs: ['B.Tech', 'M.Tech', 'MBA'] },
@@ -58,9 +58,8 @@ const AICTE = () => {
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-2">
                                             <h3 className="font-bold text-lg text-gray-900">{institution.name}</h3>
-                                            <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                                institution.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                                            }`}>
+                                            <span className={`px-2 py-1 rounded text-xs font-medium ${institution.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                                                }`}>
                                                 {institution.status}
                                             </span>
                                         </div>

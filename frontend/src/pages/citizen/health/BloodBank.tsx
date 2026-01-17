@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Droplet, MapPin, Phone, Search, Activity } from 'lucide-react';
 
 interface BloodBank {
@@ -17,7 +17,7 @@ const BloodBank = () => {
 
     const bloodGroups = ['all', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
-    const [bloodBanks, setBloodBanks] = useState<BloodBank[]>([
+    const [bloodBanks] = useState<BloodBank[]>([
         { id: '1', name: 'AIIMS Blood Bank', address: 'AIIMS Campus, New Delhi', phone: '011-26588500', distance: '2.5 km', availableGroups: ['A+', 'B+', 'O+', 'AB+'], stockStatus: 'Available' },
         { id: '2', name: 'Red Cross Blood Bank', address: 'Red Cross Building, Connaught Place', phone: '011-23345678', distance: '1.8 km', availableGroups: ['A+', 'A-', 'B+', 'O+', 'O-'], stockStatus: 'Available' },
         { id: '3', name: 'Apollo Blood Bank', address: 'Apollo Hospital, Sarita Vihar', phone: '011-26825678', distance: '5.2 km', availableGroups: ['B+', 'AB+', 'O+'], stockStatus: 'Low' },
@@ -26,7 +26,7 @@ const BloodBank = () => {
 
     const filteredBanks = bloodBanks.filter(bank => {
         const matchesSearch = bank.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            bank.address.toLowerCase().includes(searchQuery.toLowerCase());
+            bank.address.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesGroup = selectedGroup === 'all' || bank.availableGroups.includes(selectedGroup);
         return matchesSearch && matchesGroup;
     });
@@ -100,9 +100,8 @@ const BloodBank = () => {
                                             <p className="text-sm font-medium text-gray-700 mb-2">Available Blood Groups:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {bank.availableGroups.map((group, idx) => (
-                                                    <span key={idx} className={`px-3 py-1 rounded text-xs font-medium ${
-                                                        selectedGroup === group ? 'bg-red-600 text-white' : 'bg-red-50 text-red-700'
-                                                    }`}>
+                                                    <span key={idx} className={`px-3 py-1 rounded text-xs font-medium ${selectedGroup === group ? 'bg-red-600 text-white' : 'bg-red-50 text-red-700'
+                                                        }`}>
                                                         {group}
                                                     </span>
                                                 ))}

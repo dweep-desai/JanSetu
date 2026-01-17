@@ -2,8 +2,9 @@ import {
   Building2, MapPin, Ambulance, Pill, Phone, ShieldAlert,
   Car, CloudSun, FileText, LucideIcon, Tractor, ShoppingCart,
   Calculator, Zap, Bus, Fuel, Droplet,
-  Activity, Stethoscope, Download, IdCard, School, FileCheck
+  Activity, Stethoscope, Download, IdCard, School, FileCheck, FolderLock
 } from 'lucide-react';
+
 
 
 // Service Action Types
@@ -422,6 +423,23 @@ export const transportUtilityServices: ServiceDefinition[] = [
   }
 ];
 
+// DigiLocker Services Definitions
+export const digiLockerServices: ServiceDefinition[] = [
+  {
+    id: 'digilocker-dashboard',
+    title: 'DigiLocker',
+    description: 'Access your documents',
+    icon: FolderLock,
+    category: 'general',
+    color: 'bg-indigo-50 hover:bg-indigo-100 border-indigo-200',
+    action: createNavigateAction('/citizen/digilocker'),
+    metadata: {
+      path: '/citizen/digilocker'
+    }
+  }
+];
+
+
 
 // Helper function to get services by category
 export const getServicesByCategory = (category: ServiceDefinition['category']): ServiceDefinition[] => {
@@ -481,6 +499,8 @@ export const allServices: ServiceDefinition[] = [
   ...myCityServices,
   ...agricultureServices,
   ...educationServices,
-  ...transportUtilityServices
+  ...transportUtilityServices,
+  ...digiLockerServices
 ];
+
 

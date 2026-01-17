@@ -2,254 +2,176 @@
 
 A comprehensive unified digital public infrastructure platform that demonstrates how multiple government services can be onboarded, managed, accessed, and monitored through a single core platform. Inspired by India's UMANG portal, JanSetu provides a scalable, extensible architecture for digital governance.
 
-## 🎯 Problem Statement
+## Project Overview
 
-Citizens face challenges accessing government services due to:
-- **Fragmented Services**: Services scattered across multiple platforms
-- **Complex Onboarding**: Difficult process for service providers to integrate
-- **Lack of Transparency**: No unified view of service availability and performance
-- **Poor User Experience**: Different interfaces and authentication mechanisms
-
-## 💡 Solution Overview
-
-JanSetu provides a **single unified platform** that:
+JanSetu provides a single unified platform that:
 - Centralizes all government services under one interface
 - Enables seamless service provider onboarding with governance workflows
 - Provides real-time observability and analytics
 - Offers consistent user experience across all services
 - Supports role-based access control for citizens, providers, and administrators
 
-## 🏗️ System Architecture
+## Features
 
-### High-Level Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Presentation Layer                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │   Citizens   │  │   Providers  │  │   Admins     │     │
-│  │   Portal     │  │   Portal     │  │   Portal     │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-└───────────────────────┬─────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Core Platform Layer                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │  Identity &  │  │   Service    │  │   API        │     │
-│  │  Auth (JWT)  │  │   Registry   │  │   Gateway    │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │Observability │  │   Caching    │  │  Governance  │     │
-│  │  & Metrics   │  │   (Redis)    │  │   Workflow   │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-└───────────────────────┬─────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Service Layer                              │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │ Healthcare   │  │ Agriculture  │  │  Grievance   │     │
-│  │   Service    │  │   Service    │  │   Service    │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │  Education   │  │  Transport    │  │   [More...]  │     │
-│  │   Service    │  │   Service    │  │              │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Core Design Principles
-
-1. **Pluggable Architecture**: Services can be independently developed and integrated
-2. **API Gateway Pattern**: All service requests routed through central gateway
-3. **Service Registry**: Dynamic service discovery and management
-4. **Governance Workflow**: Approval-based service onboarding process
-5. **Observability First**: Built-in metrics, logging, and monitoring
-
-## 🔑 Key Features
-
-### 1. Unified Service Catalog
-- **30+ Government Services** across 6 categories:
+### Unified Service Catalog
+- 30+ Government Services across 6 categories:
   - Healthcare (Medical stores, Hospitals, Ambulance, Telemedicine)
   - Emergency Services (Police, Helplines, Ambulance)
   - Agriculture (MSP, Market availability, Supply exchange)
   - Education (Marksheets, ABC ID, AICTE, NTA)
   - Transport & Utility (Fuel prices, Petrol stations)
   - My City (Traffic, Weather, Complaints, Public transport)
+  - DigiLocker (Document interaction and storage)
 
-### 2. Service Onboarding & Governance
-- **Provider Self-Service**: Service providers can submit onboarding requests
-- **Admin Approval Workflow**: Multi-stage approval process (PENDING → APPROVED → ACTIVE)
-- **Service Lifecycle Management**: Activate/deactivate services dynamically
-- **Change Request Mechanism**: Admin can request modifications before approval
+### Service Onboarding & Governance
+- Provider Self-Service: Service providers can submit onboarding requests
+- Admin Approval Workflow: Multi-stage approval process (PENDING -> APPROVED -> ACTIVE)
+- Service Lifecycle Management: Activate/deactivate services dynamically
+- Change Request Mechanism: Admin can request modifications before approval
 
-### 3. Identity & Access Management
-- **Aadhar-based Authentication**: Secure OTP-based login system
-- **Role-Based Access Control**: Citizens, Service Providers, Administrators
-- **JWT Token Management**: Stateless authentication with secure token handling
+### Identity & Access Management
+- Aadhar-based Authentication: Secure OTP-based login system
+- Role-Based Access Control: Citizens, Service Providers, Administrators
+- JWT Token Management: Stateless authentication with secure token handling
 
-### 4. API Gateway & Routing
-- **Dynamic Request Routing**: Routes requests to appropriate services based on registry
-- **Request Caching**: Redis-based caching for improved performance
-- **Rate Limiting**: Protection against abuse and overload
-- **Request Logging**: Complete audit trail of all API calls
+### API Gateway & Routing
+- Dynamic Request Routing: Routes requests to appropriate services based on registry
+- Request Caching: Redis-based caching for improved performance
+- Rate Limiting: Protection against abuse and overload
+- Request Logging: Complete audit trail of all API calls
 
-### 5. Observability & Analytics
-- **Service-Level Metrics**: Request counts, response times, error rates
-- **Platform Health Monitoring**: Real-time system status
-- **Request Logs**: Detailed logging for debugging and analysis
-- **Performance Analytics**: Track service usage and performance
+### Observability & Analytics
+- Service-Level Metrics: Request counts, response times, error rates
+- Platform Health Monitoring: Real-time system status
+- Request Logs: Detailed logging for debugging and analysis
+- Performance Analytics: Track service usage and performance
 
-### 6. Real-Time API Integrations
-- **Location Services**: Integration with OpenStreetMap/Overpass API for location-based services
-- **Government Data Portals**: Real-time MSP data, fuel prices, market information
-- **Third-Party APIs**: Extensible architecture for external service integration
+### Real-Time API Integrations
+- Location Services: Integration with OpenStreetMap/Overpass API for location-based services
+- Government Data Portals: Real-time MSP data, fuel prices, market information
+- Third-Party APIs: Extensible architecture for external service integration
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Backend
-- **Framework**: FastAPI (High-performance, async Python framework)
-- **Database**: SQLite (Development) / PostgreSQL (Production-ready)
-- **Cache**: Redis (For OTP storage and request caching)
-- **Authentication**: JWT (JSON Web Tokens)
-- **ORM**: SQLAlchemy (Database abstraction layer)
+- Framework: FastAPI (High-performance, async Python framework)
+- Database: SQLite (Development) / PostgreSQL (Production-ready)
+- Cache: Redis (For OTP storage and request caching)
+- Authentication: JWT (JSON Web Tokens)
+- ORM: SQLAlchemy (Database abstraction layer)
 
 ### Frontend
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite (Fast development and build)
-- **Styling**: Tailwind CSS (Utility-first CSS framework)
-- **Routing**: React Router (Client-side routing)
-- **Maps**: Leaflet.js (Interactive maps for location services)
+- Framework: React 18 with TypeScript
+- Build Tool: Vite (Fast development and build)
+- Styling: Tailwind CSS (Utility-first CSS framework)
+- Routing: React Router (Client-side routing)
+- Maps: Leaflet.js (Interactive maps for location services)
 
 ### Infrastructure
-- **Containerization**: Docker & Docker Compose
-- **Deployment**: Vercel (Frontend), Docker (Backend)
+- Containerization: Docker & Docker Compose
+- Deployment: Vercel (Frontend), Docker (Backend)
 
-## 📊 System Design Highlights
+## Setup Steps
 
-### Service Registry Pattern
-- Central registry maintains all service metadata
-- Services register themselves on startup
-- Dynamic routing based on registry lookup
-- Supports service versioning and multiple instances
+### Prerequisites
+- Python 3.9+
+- Node.js 16+
+- Docker and Docker Compose (optional, for Redis/Postgres)
 
-### API Gateway Pattern
-- Single entry point for all service requests
-- Request/response transformation
-- Authentication and authorization
-- Rate limiting and throttling
-- Request/response logging
+### Environment Variables
 
-### Governance Workflow
-```
-Service Provider → Submit Request → PENDING
-                              ↓
-                    Admin Review
-                              ↓
-        ┌─────────────┬─────────────┬─────────────┐
-        ↓             ↓             ↓             ↓
-    APPROVED    REJECTED    CHANGES_REQUESTED   [Resubmit]
-        ↓
-    Service Active → Available in Gateway
+Copy the example environment file to create your local configuration:
+
+```bash
+cp backend/.env.example backend/.env
 ```
 
-### Caching Strategy
-- **OTP Storage**: Redis for temporary OTP codes (5-minute TTL)
-- **Service Registry**: Cache service metadata to reduce database queries
-- **API Responses**: Cache frequently accessed data (configurable TTL)
+Example `.env` content:
 
-### Security Architecture
-- **Authentication**: JWT-based stateless authentication
-- **Authorization**: Role-based access control (RBAC)
-- **CORS**: Configurable cross-origin resource sharing
-- **Input Validation**: Pydantic schemas for request validation
-- **SQL Injection Protection**: ORM-based queries prevent SQL injection
+```ini
+# Database Configuration
+DATABASE_URL=sqlite:///./jansetu.db
 
-## 🚀 Scalability & Extensibility
+# Redis Configuration
+REDIS_URL=redis://localhost:6379/0
 
-### Horizontal Scaling
-- Stateless API design allows multiple backend instances
-- Redis enables shared state across instances
-- Database can be scaled independently
+# JWT Configuration
+JWT_SECRET_KEY=your-secret-key-change-in-production
+JWT_ALGORITHM=HS256
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
 
-### Service Extensibility
-- **Pluggable Services**: New services can be added without modifying core platform
-- **Standardized Interface**: Services follow consistent API patterns
-- **Self-Registration**: Services automatically register on startup
+# OTP Configuration
+OTP_EXPIRE_MINUTES=5
+OTP_LENGTH=6
 
-### Performance Optimizations
-- **Request Caching**: Reduce load on downstream services
-- **Async Operations**: Non-blocking I/O for better concurrency
-- **Database Indexing**: Optimized queries for fast lookups
-- **CDN Ready**: Frontend assets can be served via CDN
+# CORS Configuration
+CORS_ORIGINS=["http://localhost:3000","http://localhost:5173"]
 
-## 📈 Use Cases
+# Platform Configuration
+PLATFORM_BASE_URL=http://localhost:8000
+```
 
-### For Citizens
-- Access all government services from single platform
-- Real-time location-based services (hospitals, petrol stations, police stations)
-- Track service requests and complaints
-- View service availability and status
+## How to Run Locally
 
-### For Service Providers
-- Self-service onboarding process
-- Track onboarding request status
-- Manage service lifecycle
-- View service usage metrics
+### Windows
 
-### For Administrators
-- Review and approve service onboarding requests
-- Monitor platform health and performance
-- Manage service lifecycle (activate/deactivate)
-- View comprehensive analytics and metrics
+Open a PowerShell terminal for the Backend:
 
-## 🎯 Key Differentiators
+```powershell
+cd backend
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+python run_server.py
+```
 
-1. **Unified Platform**: Single entry point for all government services
-2. **Governance Built-in**: Approval workflows ensure quality and security
-3. **Real-Time Integrations**: Live data from government APIs and third-party services
-4. **Observability**: Built-in monitoring and analytics
-5. **Extensible Architecture**: Easy to add new services and features
-6. **User-Centric Design**: Consistent experience across all services
+Open a new PowerShell terminal for the Frontend:
 
-## 🔐 Security Features
+```powershell
+cd frontend
+npm install
+npm run dev
+```
 
-- **Aadhar-based Authentication**: Secure OTP verification
-- **JWT Tokens**: Stateless, secure token-based authentication
-- **Role-Based Access Control**: Granular permissions per user role
-- **Input Validation**: All inputs validated using Pydantic schemas
-- **CORS Protection**: Configurable cross-origin policies
-- **Rate Limiting**: Protection against abuse
+### Linux / MacOS
 
-## 📊 Monitoring & Analytics
+Backend:
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python run_server.py
+```
 
-- **Service Metrics**: Request counts, response times, error rates per service
-- **Platform Health**: Real-time system status and health checks
-- **Request Logs**: Complete audit trail with timestamps and user information
-- **Performance Tracking**: Monitor service performance and identify bottlenecks
+Frontend:
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## 🌐 API Integration Capabilities
+## Test Login Credentials
 
-- **Location Services**: OpenStreetMap/Overpass API for real-time location data
-- **Government Data**: Integration with Indian government data portals
-- **Third-Party Services**: Extensible architecture for external API integration
-- **Real-Time Data**: Live updates for fuel prices, MSP, market availability
+To access the Citizen Dashboard, use the following test credentials:
 
-## 🎓 Learning Outcomes
+- **Aadhar Number**: `123456789012` (Any 12-digit number works)
+- **OTP**: `123456` (Default mock OTP for development)
 
-This project demonstrates:
-- **Microservices Architecture**: Service-oriented design with independent services
-- **API Gateway Pattern**: Centralized routing and management
-- **Service Registry**: Dynamic service discovery
-- **Governance Workflows**: Approval-based service management
-- **Observability**: Metrics, logging, and monitoring
-- **Security Best Practices**: Authentication, authorization, input validation
+## Basic Error Handling
 
-## 📝 License
+The application implements robust error handling mechanisms:
+- **Backend Logging**: The `run_server.py` script includes `safe_print` generic error handling to manage console encoding issues on Windows.
+- **API Errors**: All API endpoints return standardized JSON error responses (e.g., 404 Not Found, 500 Internal Server Error) which are caught and displayed gracefully in the frontend.
+- **Validation**: Pydantic models ensure all incoming data is validated before processing, returning detailed 422 Unprocessable Entity errors if validation fails.
+
+## Confirmation of No Secrets
+
+This repository does **NOT** contain any sensitive secrets, private API keys, or production credentials.
+- All configuration is managed via environment variables.
+- The `JWT_SECRET_KEY` in the example is a placeholder.
+- Mock data is used for demonstration purposes.
+
+## License
 
 This project is created for demonstration purposes as part of Ingenious Hackathon 7.0.
-
----
-
-**Built with ❤️ for Digital India**

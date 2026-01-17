@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ShoppingCart, User, Search, MapPin, Phone } from 'lucide-react';
 
 interface Listing {
@@ -21,7 +21,7 @@ const Mkisaan = () => {
 
     const categories = ['all', 'Cereals', 'Vegetables', 'Fruits', 'Oilseeds', 'Pulses', 'Livestock'];
 
-    const [listings, setListings] = useState<Listing[]>([
+    const [listings] = useState<Listing[]>([
         { id: '1', type: 'sell', product: 'Wheat', category: 'Cereals', quantity: '100 Quintals', price: 2100, location: 'Delhi', seller: 'Rajesh Kumar', phone: '9876543210', postedDate: '2024-01-19' },
         { id: '2', type: 'buy', product: 'Rice', category: 'Cereals', quantity: '50 Quintals', price: 3200, location: 'Punjab', seller: 'Amit Singh', phone: '9876543211', postedDate: '2024-01-18' },
         { id: '3', type: 'sell', product: 'Tomato', category: 'Vegetables', quantity: '5 Tons', price: 40, location: 'Haryana', seller: 'Priya Sharma', phone: '9876543212', postedDate: '2024-01-20' },
@@ -31,7 +31,7 @@ const Mkisaan = () => {
 
     const filteredListings = listings.filter(listing => {
         const matchesSearch = listing.product.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            listing.location.toLowerCase().includes(searchQuery.toLowerCase());
+            listing.location.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesType = selectedType === 'all' || listing.type === selectedType;
         const matchesCategory = selectedCategory === 'all' || listing.category === selectedCategory;
         return matchesSearch && matchesType && matchesCategory;
@@ -87,9 +87,8 @@ const Mkisaan = () => {
                         <div key={listing.id} className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                             <div className="flex items-start justify-between mb-3">
                                 <div>
-                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                        listing.type === 'sell' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                                    }`}>
+                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${listing.type === 'sell' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                                        }`}>
                                         {listing.type === 'sell' ? 'For Sale' : 'Want to Buy'}
                                     </span>
                                 </div>

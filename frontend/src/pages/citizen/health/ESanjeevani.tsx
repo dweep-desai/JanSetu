@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Video, Calendar, Clock, User, Stethoscope, Phone } from 'lucide-react';
+import { useState } from 'react';
+import { Video, Calendar, Clock, Stethoscope } from 'lucide-react';
 
 interface Doctor {
     id: string;
@@ -121,11 +121,10 @@ const ESanjeevani = () => {
                                     <button
                                         key={idx}
                                         onClick={() => setSelectedSlot(slot)}
-                                        className={`px-4 py-2 rounded-lg border transition-colors ${
-                                            selectedSlot === slot
+                                        className={`px-4 py-2 rounded-lg border transition-colors ${selectedSlot === slot
                                                 ? 'bg-teal-600 text-white border-teal-600'
                                                 : 'bg-white text-gray-700 border-gray-300 hover:border-teal-500'
-                                        }`}
+                                            }`}
                                     >
                                         {slot}
                                     </button>
