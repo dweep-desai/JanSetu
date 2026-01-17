@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { CloudSun, Wind, Droplets, Thermometer, MapPin, RefreshCw } from 'lucide-react';
+import { CloudSun, Wind, Droplets, Thermometer, MapPin, RefreshCw, Sunrise, Sunset, Umbrella } from 'lucide-react';
+import { getWeather } from '../../../services/weatherService';
 
 
 const WeatherInfo = () => {
@@ -7,44 +8,37 @@ const WeatherInfo = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchWeather = async (lat?: number, lng?: number) => {
-            // In a real app, we would call: api.getWeather(lat, lng)
-            // For MVP, we simulate different weather based on coordinates presence
-
+        const fetchWeatherData = async (lat?: number, lng?: number) => {
             setLoading(true);
-
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // const locationName = lat && lng ? `Lat: ${lat.toFixed(2)}, Lng: ${lng.toFixed(2)}` : 'New Delhi';
-            const isLocal = !!lat && !!lng;
-
-            setWeather({
-
-                temp: isLocal ? 32 : 28,
-                condition: isLocal ? 'Sunny' : 'Partly Cloudy',
-                location: isLocal ? 'Current Location' : 'New Delhi',
-                coordinates: isLocal ? `${lat?.toFixed(4)}, ${lng?.toFixed(4)}` : undefined,
-                humidity: isLocal ? 55 : 65,
-                wind: isLocal ? 15 : 12,
-                aqi: isLocal ? 120 : 156,
-                lastUpdated: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            });
-            setLoading(false);
+            try {
+                const data = await getWeather(lat, lng);
+                setWeather(data);
+            } catch (error) {
+                console.error("Failed to fetch weather", error);
+                // Fallback to default/Delhi if error
+                try {
+                    const data = await getWeather();
+                    setWeather(data);
+                } catch (e) {
+                    setLoading(false);
+                }
+            } finally {
+                setLoading(false);
+            }
         };
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    fetchWeather(position.coords.latitude, position.coords.longitude);
+                    fetchWeatherData(position.coords.latitude, position.coords.longitude);
                 },
                 (error) => {
                     console.error("Geolocation denied/error", error);
-                    fetchWeather(); // Fallback
+                    fetchWeatherData(); // Fallback to default
                 }
             );
         } else {
-            fetchWeather();
+            fetchWeatherData();
         }
     }, []);
 
@@ -94,6 +88,21 @@ const WeatherInfo = () => {
                             <Thermometer className={`w-6 h-6 mx-auto mb-2 ${weather.aqi > 150 ? 'text-orange-500' : 'text-green-500'}`} />
                             <p className="text-xs text-gray-500">AQI</p>
                             <p className={`font-bold ${weather.aqi > 150 ? 'text-orange-600' : 'text-green-600'}`}>{weather.aqi}</p>
+                        </div>
+                        <div className="p-3 bg-blue-50 rounded-xl">
+                            <Umbrella className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+                            <p className="text-xs text-gray-500">Rain</p>
+                            <p className="font-bold text-gray-800">{weather.precipitation} mm</p>
+                        </div>
+                        <div className="p-3 bg-yellow-50 rounded-xl">
+                            <Sunrise className="w-6 h-6 text-yellow-600 mx-auto mb-2" />
+                            <p className="text-xs text-gray-500">Sunrise</p>
+                            <p className="font-bold text-gray-800">{weather.sunrise}</p>
+                        </div>
+                        <div className="p-3 bg-orange-50 rounded-xl">
+                            <Sunset className="w-6 h-6 text-orange-600 mx-auto mb-2" />
+                            <p className="text-xs text-gray-500">Sunset</p>
+                            <p className="font-bold text-gray-800">{weather.sunset}</p>
                         </div>
                     </div>
 

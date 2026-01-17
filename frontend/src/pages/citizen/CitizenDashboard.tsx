@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import {
   Heart, AlertTriangle, Castle, Fuel,
@@ -9,6 +9,7 @@ import HealthQuickMenu from '../../components/citizen/HealthQuickMenu';
 import EmergencyQuickMenu from '../../components/citizen/EmergencyQuickMenu';
 import MyCityQuickMenu from '../../components/citizen/MyCityQuickMenu';
 import './CitizenDashboard.css';
+import { getWeather } from '../../services/weatherService';
 
 
 
@@ -289,41 +290,103 @@ const HelplineCategories = () => {
 
 // Weather & AQI Card Component
 const WeatherAQICard = () => {
+  const [weather, setWeather] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        // Try to get user location
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              try {
+                const data = await getWeather(position.coords.latitude, position.coords.longitude);
+                setWeather(data);
+              } catch (e) {
+                // Fallback to default
+                const data = await getWeather();
+                setWeather(data);
+              }
+            },
+            async () => {
+              // Permission denied or error, fallback to default
+              const data = await getWeather();
+              setWeather(data);
+            }
+          );
+        } else {
+          const data = await getWeather();
+          setWeather(data);
+        }
+      } catch (error) {
+        console.error("Weather fetch failed", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWeather();
+  }, []);
+
+  if (loading || !weather) {
+    return (
+      <div className="weather-card flex items-center justify-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  const getAqiColor = (aqi: number) => {
+    if (aqi <= 50) return 'good';
+    if (aqi <= 100) return 'moderate';
+    return 'unhealthy';
+  };
+
+  const getAqiStatus = (aqi: number) => {
+    if (aqi <= 50) return 'Good';
+    if (aqi <= 100) return 'Moderate';
+    return 'Unhealthy';
+  };
+
+  const aqiColor = getAqiColor(weather.aqi);
+  const aqiPercentage = Math.min((weather.aqi / 300) * 100, 100);
+
   return (
     <div className="weather-card">
       <div className="weather-header">
         <Cloud className="weather-cloud-icon" />
-        <span className="weather-location">New Delhi, India</span>
+        <span className="weather-location">{weather.location}</span>
       </div>
 
       <div className="weather-main">
         <div className="temperature">
           <Thermometer className="temp-icon" />
-          <span className="temp-value">28°C</span>
+          <span className="temp-value">{weather.temp}°C</span>
         </div>
-        <span className="weather-condition">Partly Cloudy</span>
+        <span className="weather-condition">{weather.condition}</span>
       </div>
 
       <div className="weather-details">
         <div className="weather-detail">
           <Droplets className="detail-icon" />
-          <span>Humidity: 65%</span>
+          <span>Humidity: {weather.humidity}%</span>
         </div>
         <div className="weather-detail">
           <Wind className="detail-icon" />
-          <span>Wind: 12 km/h</span>
+          <span>Wind: {weather.wind} km/h</span>
         </div>
       </div>
 
       <div className="aqi-section">
         <div className="aqi-header">
           <span className="aqi-label">Air Quality Index</span>
-          <span className="aqi-value moderate">156</span>
+          <span className={`aqi-value ${aqiColor}`}>{weather.aqi}</span>
         </div>
         <div className="aqi-bar">
-          <div className="aqi-fill" style={{ width: '52%' }}></div>
+          <div className="aqi-fill" style={{ width: `${aqiPercentage}%` }}></div>
         </div>
-        <span className="aqi-status">Moderate - Unhealthy for sensitive groups</span>
+        <span className="aqi-status">{getAqiStatus(weather.aqi)}</span>
       </div>
     </div>
   );
