@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api, { API_BASE_URL } from '../services/api';
+import api from '../services/api';
 import { User, AuthContextType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,33 +32,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (phone: string) => {
     try {
-      console.log('Attempting to login with phone:', phone);
-      // DEBUG: Alert to check config
-      window.alert(`Attempting login to: ${API_BASE_URL}\nCheck if this URL is correct.`);
-      
       const response = await api.post('/auth/login', { phone });
-      console.log('Login response:', response.data);
       return response.data;
     } catch (error: any) {
-      console.error('Login error details:', {
-        message: error.message,
-        code: error.code,
-        response: error.response?.data,
-        status: error.response?.status,
-        config: error.config
-      });
-      
-      // More specific error handling
-      if (error.code === 'ECONNREFUSED' || 
-          error.code === 'ERR_NETWORK' ||
-          error.message?.includes('Network Error') ||
-          error.message?.includes('Failed to fetch')) {
-        throw new Error(`Cannot connect to server. Make sure the backend is running on ${API_BASE_URL}`);
-      }
-      
+      console.error('Login error:', error);
       const errorMessage = error.response?.data?.detail || error.message || 'Login failed';
-      // DEBUG: Alert on error
-      window.alert(`Login Error:\n${errorMessage}\n\nBackend URL: ${API_BASE_URL}`);
+      if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error')) {
+        throw new Error('Cannot connect to server. Make sure the backend is running on http://localhost:8000');
+      }
       throw new Error(errorMessage);
     }
   };
@@ -71,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         otp_code: otpCode,
       });
       
-      const { access_token } = response.data;
+      const { access_token, user_id, role } = response.data;
       setToken(access_token);
       localStorage.setItem('token', access_token);
       
