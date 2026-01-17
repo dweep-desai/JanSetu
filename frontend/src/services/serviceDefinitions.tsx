@@ -91,6 +91,20 @@ const createCallAction = (phoneNumber: string): ServiceAction => ({
   }
 });
 
+// Shared Call Ambulance Service (used in both Health and Emergency)
+const callAmbulanceService: ServiceDefinition = {
+  id: 'call-ambulance',
+  title: 'Call an Ambulance',
+  description: 'Emergency booking',
+  icon: Ambulance,
+  category: 'health',
+  color: 'bg-red-50 hover:bg-red-100 border-red-200',
+  action: createNavigateAction('/citizen/health/call-ambulance'),
+  metadata: {
+    path: '/citizen/health/call-ambulance'
+  }
+};
+
 // Health Services Definitions
 export const healthServices: ServiceDefinition[] = [
   {
@@ -117,18 +131,7 @@ export const healthServices: ServiceDefinition[] = [
       path: '/citizen/health/hospitals-near-me'
     }
   },
-  {
-    id: 'call-ambulance',
-    title: 'Call an Ambulance',
-    description: 'Emergency booking',
-    icon: Ambulance,
-    category: 'health',
-    color: 'bg-red-50 hover:bg-red-100 border-red-200',
-    action: createNavigateAction('/citizen/health/call-ambulance'),
-    metadata: {
-      path: '/citizen/health/call-ambulance'
-    }
-  },
+  callAmbulanceService, // Use shared service object
   {
     id: 'search-medicines',
     title: 'Search Medicines',
@@ -181,18 +184,7 @@ export const emergencyServices: ServiceDefinition[] = [
       path: '/citizen/emergency/police-stations-near-me'
     }
   },
-  {
-    id: 'call-ambulance-emergency',
-    title: 'Call Ambulance',
-    description: 'Emergency Medical Support',
-    icon: Ambulance,
-    category: 'emergency',
-    color: 'bg-red-50 hover:bg-red-100 border-red-200',
-    action: createCallAction('108'),
-    metadata: {
-      phoneNumber: '108'
-    }
-  }
+  callAmbulanceService // Use the same shared service object from Health Services
 ];
 
 // Helper function to get services by category
