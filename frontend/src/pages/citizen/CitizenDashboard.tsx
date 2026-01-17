@@ -2,10 +2,6 @@ import { useState } from 'react';
 
 import {
   Heart, AlertTriangle, Train, Fuel,
-import { useState } from 'react';
-
-import {
-  Heart, AlertTriangle, Train, Fuel,
   Bookmark, ChevronLeft, ChevronRight, Phone, Calculator,
   Star, Cloud, Wind, Droplets, Thermometer
 } from "lucide-react";
@@ -20,17 +16,9 @@ const QuickServices = () => {
   const [isEmergencyMenuOpen, setIsEmergencyMenuOpen] = useState(false);
 
 
-  const [isHealthMenuOpen, setIsHealthMenuOpen] = useState(false);
-  const [isEmergencyMenuOpen, setIsEmergencyMenuOpen] = useState(false);
-
-
   const services = [
     { title: "Health", icon: <Heart className="service-icon" />, gradient: "health", action: () => setIsHealthMenuOpen(true) },
     { title: "Emergency", icon: <AlertTriangle className="service-icon" />, gradient: "emergency", action: () => setIsEmergencyMenuOpen(true) },
-
-    { title: "Health", icon: <Heart className="service-icon" />, gradient: "health", action: () => setIsHealthMenuOpen(true) },
-    { title: "Emergency", icon: <AlertTriangle className="service-icon" />, gradient: "emergency", action: () => setIsEmergencyMenuOpen(true) },
-
     { title: "Travel", icon: <Train className="service-icon" />, gradient: "travel" },
     { title: "Utility", icon: <Fuel className="service-icon" />, gradient: "utility" },
   ];
@@ -75,47 +63,7 @@ const QuickServices = () => {
         onClose={() => setIsEmergencyMenuOpen(false)}
       />
     </>
-    <>
-      <section className="section">
-        <div className="section-header">
-          <Star className="section-icon pink" />
-          <h2 className="section-title">Quick Services</h2>
-        </div>
-
-        <div className="services-grid">
-          {services.map((service, index) => (
-            <div
-              key={index}
-              className={`service-card ${service.gradient}`}
-              onClick={service.action}
-            >
-              <span className="service-title">{service.title}</span>
-              <div className="service-icon-container">{service.icon}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="dots">
-          <span className="dot active"></span>
-          <span className="dot"></span>
-          <span className="dot"></span>
-          <span className="dot"></span>
-          <span className="dot"></span>
-          <span className="dot"></span>
-        </div>
-      </section>
-
-      <HealthQuickMenu
-        isOpen={isHealthMenuOpen}
-        onClose={() => setIsHealthMenuOpen(false)}
-      />
-      <EmergencyQuickMenu
-        isOpen={isEmergencyMenuOpen}
-        onClose={() => setIsEmergencyMenuOpen(false)}
-      />
-    </>
   );
-
 
 };
 
@@ -137,7 +85,6 @@ const RecentServices = () => {
           <button className="arrow-btn"><ChevronRight className="w-4 h-4" /></button>
         </div>
       </div>
-
 
       <div className="recent-grid">
         {recentServices.map((service, index) => (
@@ -176,7 +123,6 @@ const HelplineCategories = () => {
         <h2 className="section-title">Essential Helpline Numbers</h2>
       </div>
 
-
       <div className="helpline-grid">
         {categories.map((category, index) => (
           <div key={index} className="helpline-item">
@@ -198,7 +144,6 @@ const WeatherAQICard = () => {
         <span className="weather-location">New Delhi, India</span>
       </div>
 
-
       <div className="weather-main">
         <div className="temperature">
           <Thermometer className="temp-icon" />
@@ -206,7 +151,6 @@ const WeatherAQICard = () => {
         </div>
         <span className="weather-condition">Partly Cloudy</span>
       </div>
-
 
       <div className="weather-details">
         <div className="weather-detail">
@@ -218,7 +162,6 @@ const WeatherAQICard = () => {
           <span>Wind: 12 km/h</span>
         </div>
       </div>
-
 
       <div className="aqi-section">
         <div className="aqi-header">
@@ -263,16 +206,9 @@ const PromoCards = () => {
 
 // ============================================
 // Main Dashboard Component
-// Main Dashboard Component
 // ============================================
 const CitizenDashboard = () => {
   return (
-    <>
-      <QuickServices />
-      <RecentServices />
-      <HelplineCategories />
-      <PromoCards />
-    </>
     <>
       <QuickServices />
       <RecentServices />
