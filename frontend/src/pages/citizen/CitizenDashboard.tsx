@@ -9,6 +9,7 @@ import HealthQuickMenu from '../../components/citizen/HealthQuickMenu';
 import EmergencyQuickMenu from '../../components/citizen/EmergencyQuickMenu';
 import MyCityQuickMenu from '../../components/citizen/MyCityQuickMenu';
 import TransportQuickMenu from '../../components/citizen/TransportQuickMenu';
+import FinancialCalculatorModal from '../../components/citizen/FinancialCalculatorModal';
 import './CitizenDashboard.css';
 import { getWeather } from '../../services/weatherService';
 
@@ -398,7 +399,7 @@ const WeatherAQICard = () => {
 };
 
 // Financial Calculator Card Component
-const FinancialCalculatorCard = () => {
+const FinancialCalculatorCard = ({ onOpen }: { onOpen: () => void }) => {
   return (
     <div className="financial-card">
       <div className="financial-overlay"></div>
@@ -406,20 +407,20 @@ const FinancialCalculatorCard = () => {
         <Calculator className="calculator-icon" />
         <h3 className="financial-title">Financial Calculator</h3>
         <p className="financial-desc">
-          Get instant insights to make smarter money calculations.
+          <span className="text-xs opacity-90 block font-medium text-yellow-100">calculate provident fund, pension and TDR</span>
         </p>
-        <button className="calculate-btn">Calculate Now</button>
+        <button onClick={onOpen} className="calculate-btn">Calculate Now</button>
       </div>
     </div>
   );
 };
 
 // Promo Cards Component
-const PromoCards = () => {
+const PromoCards = ({ onOpenCalculator }: { onOpenCalculator: () => void }) => {
   return (
     <div className="promo-grid">
       <WeatherAQICard />
-      <FinancialCalculatorCard />
+      <FinancialCalculatorCard onOpen={onOpenCalculator} />
     </div>
   );
 };
@@ -428,12 +429,19 @@ const PromoCards = () => {
 // Main Dashboard Component
 // ============================================
 const CitizenDashboard = () => {
+  const [isFinancialCalculatorOpen, setIsFinancialCalculatorOpen] = useState(false);
+
   return (
     <>
       <QuickServices />
       <RecentServices />
       <HelplineCategories />
-      <PromoCards />
+      <PromoCards onOpenCalculator={() => setIsFinancialCalculatorOpen(true)} />
+
+      <FinancialCalculatorModal
+        isOpen={isFinancialCalculatorOpen}
+        onClose={() => setIsFinancialCalculatorOpen(false)}
+      />
     </>
   );
 };

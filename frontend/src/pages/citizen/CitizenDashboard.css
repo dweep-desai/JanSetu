@@ -339,8 +339,12 @@
   top: calc(100% + 0.5rem);
   right: 0;
   min-width: 180px;
-  background: var(--card);
-  border: 1px solid var(--border);
+  /* Match Header Transparency */
+  background: rgba(255, 255, 255, 0.85);
+  /* Slightly more opaque than header for readability */
+  backdrop-filter: blur(8.7px);
+  -webkit-backdrop-filter: blur(8.7px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   z-index: 1000;
@@ -352,6 +356,7 @@
     opacity: 0;
     transform: translateY(-4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -838,6 +843,12 @@
 .dashboard .financial-content {
   position: relative;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
 }
 
 .dashboard .calculator-icon {
