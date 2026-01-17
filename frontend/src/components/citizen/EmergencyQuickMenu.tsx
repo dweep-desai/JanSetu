@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { Phone, ShieldAlert, Ambulance, MapPin, X } from 'lucide-react';
+import { ShieldAlert, X } from 'lucide-react';
+import { emergencyServices, executeServiceAction } from '../../services/serviceDefinitions';
 import '../../pages/citizen/CitizenDashboard.css';
 
 interface EmergencyQuickMenuProps {
@@ -12,43 +13,15 @@ const EmergencyQuickMenu: React.FC<EmergencyQuickMenuProps> = ({ isOpen, onClose
 
     if (!isOpen) return null;
 
-    const handleCall = (number: string) => {
-        window.location.href = `tel:${number}`;
-    };
-
-    const options = [
-        {
-            title: "Call Childline",
-            description: "For children in distress",
-            icon: <Phone className="w-8 h-8 text-orange-600" />,
-            action: () => handleCall('1098'),
-            color: "bg-orange-50 hover:bg-orange-100 border-orange-200"
-        },
-        {
-            title: "Woman Helpline",
-            description: "24/7 Support for women",
-            icon: <ShieldAlert className="w-8 h-8 text-pink-600" />,
-            action: () => handleCall('1091'),
-            color: "bg-pink-50 hover:bg-pink-100 border-pink-200"
-        },
-        {
-            title: "Locate Police Station",
-            description: "Find nearest police station",
-            icon: <MapPin className="w-8 h-8 text-blue-600" />,
-            action: () => {
-                onClose();
-                navigate('/citizen/emergency/police-stations-near-me');
-            },
-            color: "bg-blue-50 hover:bg-blue-100 border-blue-200"
-        },
-        {
-            title: "Call Ambulance",
-            description: "Emergency Medical Support",
-            icon: <Ambulance className="w-8 h-8 text-red-600" />,
-            action: () => handleCall('108'),
-            color: "bg-red-50 hover:bg-red-100 border-red-200"
+    const handleServiceClick = (service: typeof emergencyServices[0], event?: React.MouseEvent) => {
+        // For call actions, don't prevent default to allow tel: links to work
+        if (service.action.type !== 'call' && event) {
+            event.preventDefault();
         }
-    ];
+        
+        // Execute the service action
+        executeServiceAction(service, { navigate, onClose });
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -66,25 +39,33 @@ const EmergencyQuickMenu: React.FC<EmergencyQuickMenuProps> = ({ isOpen, onClose
                 </div>
 
                 <div className="p-6 grid gap-4 grid-cols-1 md:grid-cols-2">
-                    {options.map((option, index) => (
-                        <button
-                            key={index}
-                            onClick={option.action}
-                            className={`flex items-start p-4 text-left border rounded-xl transition-all duration-200 ${option.color} group`}
-                        >
-                            <div className="p-3 bg-white rounded-lg shadow-sm mr-4 group-hover:scale-110 transition-transform">
-                                {option.icon}
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors">
-                                    {option.title}
-                                </h3>
-                                <p className="text-sm text-gray-600 mt-1">
-                                    {option.description}
-                                </p>
-                            </div>
-                        </button>
-                    ))}
+                    {emergencyServices.map((service) => {
+                        const IconComponent = service.icon;
+                        return (
+                            <button
+                                key={service.id}
+                                onClick={(e) => handleServiceClick(service, e)}
+                                className={`flex items-start p-4 text-left border rounded-xl transition-all duration-200 ${service.color} group`}
+                            >
+                                <div className="p-3 bg-white rounded-lg shadow-sm mr-4 group-hover:scale-110 transition-transform">
+                                    <IconComponent className="w-8 h-8" style={{ 
+                                        color: service.color.includes('orange') ? '#ea580c' :
+                                               service.color.includes('pink') ? '#db2777' :
+                                               service.color.includes('blue') ? '#2563eb' :
+                                               service.color.includes('red') ? '#dc2626' : '#6b7280'
+                                    }} />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors">
+                                        {service.title}
+                                    </h3>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                        {service.description}
+                                    </p>
+                                </div>
+                            </button>
+                        );
+                    })}
                 </div>
 
                 <div className="p-4 bg-gray-50 border-t flex justify-between items-center text-sm text-gray-500">

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   FileText, CreditCard, GraduationCap, User, Building2, Briefcase,
   Heart, Utensils, Shield, Bus, Train, Plane, Zap, MoreHorizontal,
@@ -11,6 +12,7 @@ import { ServiceSection } from "@/components/services/ServiceSection";
 import { HeroBanner } from "@/components/services/HeroBanner";
 import { ServiceTabs } from "@/components/services/ServiceTabs";
 import { Button } from "@/components/ui/button";
+import { healthServices, emergencyServices, executeServiceAction } from "@/services/serviceDefinitions";
 
 // Service data
 const certificateServices = [
@@ -81,6 +83,11 @@ const exploreTabs = [
 
 export default function Services() {
   const [activeTab, setActiveTab] = useState("popular");
+  const navigate = useNavigate();
+
+  const handleServiceClick = (service: typeof healthServices[0] | typeof emergencyServices[0]) => {
+    executeServiceAction(service, { navigate });
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 p-6">
@@ -104,6 +111,54 @@ export default function Services() {
         subtitle="Delhi Metro Services on JanSetu"
         ctaText="Access Delhi Metro"
       />
+
+      {/* Health Services Section */}
+      <ServiceSection title="Health Services" viewAllCount={healthServices.length}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {healthServices.map((service) => {
+            const IconComponent = service.icon;
+            return (
+              <ServiceCard
+                key={service.id}
+                title={service.title}
+                subtitle={service.description}
+                icon={IconComponent}
+                colorVariant={
+                  service.color.includes('pink') ? 'pink' :
+                  service.color.includes('blue') ? 'blue' :
+                  service.color.includes('red') ? 'orange' :
+                  service.color.includes('green') ? 'green' : 'cyan'
+                }
+                onClick={() => handleServiceClick(service)}
+              />
+            );
+          })}
+        </div>
+      </ServiceSection>
+
+      {/* Emergency Services Section */}
+      <ServiceSection title="Emergency Services" viewAllCount={emergencyServices.length}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {emergencyServices.map((service) => {
+            const IconComponent = service.icon;
+            return (
+              <ServiceCard
+                key={service.id}
+                title={service.title}
+                subtitle={service.description}
+                icon={IconComponent}
+                colorVariant={
+                  service.color.includes('orange') ? 'orange' :
+                  service.color.includes('pink') ? 'pink' :
+                  service.color.includes('blue') ? 'blue' :
+                  service.color.includes('red') ? 'orange' : 'cyan'
+                }
+                onClick={() => handleServiceClick(service)}
+              />
+            );
+          })}
+        </div>
+      </ServiceSection>
 
       {/* Certificates Section */}
       <ServiceSection title="Certificates" viewAllCount={9}>
