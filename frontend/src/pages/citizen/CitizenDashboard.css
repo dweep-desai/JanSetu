@@ -57,32 +57,30 @@
    }
    
    .dashboard {
-     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-     background-color: var(--background);
-     color: var(--foreground);
+     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+     background-color: var(--background) !important;
+     color: var(--foreground) !important;
      -webkit-font-smoothing: antialiased;
      -moz-osx-font-smoothing: grayscale;
+     display: flex !important;
+     min-height: 100vh;
+     isolation: isolate;
    }
    
    /* ============================================
       Layout
       ============================================ */
    
-   .dashboard {
-     display: flex;
-     min-height: 100vh;
-     background-color: var(--background);
-   }
-   
    .dashboard .main-container {
      flex: 1;
-     display: flex;
+     display: flex !important;
      flex-direction: column;
    }
    
    .dashboard .main-content {
      flex: 1;
      padding: 1.5rem;
+     background-color: var(--background) !important;
    }
    
    /* ============================================
@@ -90,9 +88,9 @@
       ============================================ */
    
    .dashboard .sidebar {
-     width: 14rem;
-     background: var(--sidebar-bg);
-     border-right: 1px solid var(--border);
+     width: 14rem !important;
+     background: var(--sidebar-bg) !important;
+     border-right: 1px solid var(--border) !important;
      height: 100vh;
      position: sticky;
      top: 0;
@@ -112,27 +110,27 @@
    }
    
    .dashboard .nav-item {
-     display: flex;
+     display: flex !important;
      align-items: center;
      gap: 0.75rem;
      padding: 0.75rem 1rem;
      border-radius: 0.5rem;
-     text-decoration: none;
+     text-decoration: none !important;
      font-size: 0.875rem;
      font-weight: 500;
-     color: var(--sidebar-foreground);
+     color: var(--sidebar-foreground) !important;
      transition: all 0.2s ease;
      cursor: pointer;
    }
    
    .dashboard .nav-item:hover {
-     background: var(--sidebar-active);
-     color: var(--sidebar-active-text);
+     background: var(--sidebar-active) !important;
+     color: var(--sidebar-active-text) !important;
    }
    
    .dashboard .nav-item.active {
-     background: var(--sidebar-active);
-     color: var(--sidebar-active-text);
+     background: var(--sidebar-active) !important;
+     color: var(--sidebar-active-text) !important;
    }
    
    .dashboard .nav-icon {
@@ -145,12 +143,12 @@
       ============================================ */
    
    .dashboard .header {
-     display: flex;
+     display: flex !important;
      align-items: center;
      justify-content: space-between;
      padding: 0.75rem 1.5rem;
-     background: var(--card);
-     border-bottom: 1px solid var(--border);
+     background: var(--card) !important;
+     border-bottom: 1px solid var(--border) !important;
      position: sticky;
      top: 0;
      z-index: 50;
