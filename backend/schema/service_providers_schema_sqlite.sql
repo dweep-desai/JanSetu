@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS service_providers (
     address TEXT,
     organization_name TEXT,
     registration_number TEXT UNIQUE,
+    isSP BOOLEAN DEFAULT 1 NOT NULL,
     created_at TEXT DEFAULT (datetime('now')) NOT NULL,
     updated_at TEXT DEFAULT (datetime('now')) NOT NULL
 );
@@ -23,6 +24,7 @@ CREATE TABLE IF NOT EXISTS esanjeevani_service_providers (
     rating REAL DEFAULT 0.0 CHECK (rating >= 0 AND rating <= 5),
     total_consultations INTEGER DEFAULT 0,
     verified BOOLEAN DEFAULT 0,
+    isSP BOOLEAN DEFAULT 1 NOT NULL,
     created_at TEXT DEFAULT (datetime('now')) NOT NULL,
     FOREIGN KEY (service_provider_id) REFERENCES service_providers(service_provider_id) ON DELETE CASCADE
 );
@@ -35,6 +37,7 @@ CREATE TABLE IF NOT EXISTS mkisan_service_providers (
     gst_number TEXT,
     years_in_business INTEGER,
     verified BOOLEAN DEFAULT 0,
+    isSP BOOLEAN DEFAULT 1 NOT NULL,
     created_at TEXT DEFAULT (datetime('now')) NOT NULL,
     FOREIGN KEY (service_provider_id) REFERENCES service_providers(service_provider_id) ON DELETE CASCADE
 );

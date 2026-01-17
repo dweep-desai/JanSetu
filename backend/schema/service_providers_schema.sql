@@ -10,6 +10,7 @@ CREATE TABLE service_providers (
     address TEXT,
     organization_name VARCHAR(255),
     registration_number VARCHAR(255) UNIQUE,
+    isSP BOOLEAN DEFAULT TRUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
@@ -33,6 +34,7 @@ CREATE TABLE esanjeevani_service_providers (
     rating NUMERIC(3, 2) DEFAULT 0.0 CHECK (rating >= 0 AND rating <= 5),
     total_consultations INTEGER DEFAULT 0,
     verified BOOLEAN DEFAULT FALSE,
+    isSP BOOLEAN DEFAULT TRUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     CONSTRAINT fk_esanjeevani_provider FOREIGN KEY (service_provider_id) REFERENCES service_providers(service_provider_id) ON DELETE CASCADE
 );
@@ -45,6 +47,7 @@ CREATE TABLE mkisan_service_providers (
     gst_number VARCHAR(50),
     years_in_business INTEGER,
     verified BOOLEAN DEFAULT FALSE,
+    isSP BOOLEAN DEFAULT TRUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     CONSTRAINT fk_mkisan_provider FOREIGN KEY (service_provider_id) REFERENCES service_providers(service_provider_id) ON DELETE CASCADE
 );

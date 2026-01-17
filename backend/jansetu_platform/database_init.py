@@ -25,6 +25,9 @@ def check_citizens_table_exists(db):
 def init_citizens_schema_on_startup(db):
     """Initialize citizens schema if tables don't exist."""
     try:
+        # Always initialize service providers (they're independent)
+        init_service_providers_schema_on_startup(db)
+        
         # Check if citizens table already exists
         if check_citizens_table_exists(db):
             return  # Tables already exist, no need to initialize
@@ -111,9 +114,6 @@ def init_citizens_schema_on_startup(db):
         conn.close()
         
         print("[OK] Citizens schema initialized successfully!")
-        
-        # Also initialize service provider tables
-        init_service_providers_schema_on_startup(db)
         
         # Seed data if using SQLite and file exists
         if settings.DATABASE_URL.startswith('sqlite'):

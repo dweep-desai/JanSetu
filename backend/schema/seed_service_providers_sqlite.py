@@ -95,8 +95,8 @@ def seed_service_providers():
             try:
                 cursor.execute("""
                     INSERT INTO service_providers 
-                    (service_provider_id, aadhaar_hash, full_name, phone, gender, date_of_birth, age, address, organization_name, registration_number)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (service_provider_id, aadhaar_hash, full_name, phone, gender, date_of_birth, age, address, organization_name, registration_number, isSP)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
                 """, (service_provider_id, aadhaar_hash, name, phone, gender, dob, age, address, org, reg_num))
                 
                 # Insert e-Sanjeevani provider (first 10)
@@ -105,8 +105,8 @@ def seed_service_providers():
                     provider_type, specialization, exp, slots, rating, consultations = e_sanjeevani_data[idx]
                     cursor.execute("""
                         INSERT INTO esanjeevani_service_providers 
-                        (esanjeevani_provider_id, service_provider_id, provider_type, specialization, years_of_experience, available_slots, rating, total_consultations)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        (esanjeevani_provider_id, service_provider_id, provider_type, specialization, years_of_experience, available_slots, rating, total_consultations, isSP)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
                     """, (esanjeevani_provider_id, service_provider_id, provider_type, specialization, exp, slots, rating, consultations))
                 
                 # Insert mKisan provider (last 10)
@@ -115,8 +115,8 @@ def seed_service_providers():
                     category, license, gst, years = mkisan_data[idx - 10]
                     cursor.execute("""
                         INSERT INTO mkisan_service_providers 
-                        (mkisan_provider_id, service_provider_id, provider_category, business_license, gst_number, years_in_business)
-                        VALUES (?, ?, ?, ?, ?, ?)
+                        (mkisan_provider_id, service_provider_id, provider_category, business_license, gst_number, years_in_business, isSP)
+                        VALUES (?, ?, ?, ?, ?, ?, 1)
                     """, (mkisan_provider_id, service_provider_id, category, license, gst, years))
                     
             except Exception as e:
