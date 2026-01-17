@@ -1,7 +1,8 @@
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
 import {
     Home, Grid3X3, FileText, MapPin, BookOpen, LayoutDashboard,
-    Search, Bell, Moon, Menu
+    Search, Bell, Moon, Menu, User, ChevronDown
 } from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
 import './CitizenDashboard.css';
@@ -62,22 +63,52 @@ const Sidebar = () => {
 // Header Component
 const Header = () => {
     const { user, logout } = useAuth();
+    const navigate = useNavigate();
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Get user initials for avatar
     const getUserInitials = () => {
         if (user?.aadhar) {
-            // Use first two characters of Aadhar or name if available
+            // Use first two characters of Aadhar
             return user.aadhar.substring(0, 2).toUpperCase();
         }
         return 'U';
     };
 
-    // Get user display name
-    const getUserName = () => {
+    // Get full Aadhaar ID for display
+    const getAadhaarDisplay = () => {
         if (user?.aadhar) {
-            return `${user.aadhar.substring(0, 4)}...`;
+            return user.aadhar;
         }
-        return 'User';
+        return 'N/A';
+    };
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setDropdownOpen(false);
+            }
+        };
+
+        if (dropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [dropdownOpen]);
+
+    const handleViewProfile = () => {
+        setDropdownOpen(false);
+        navigate('/citizen/profile');
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
     };
 
     return (
@@ -108,20 +139,43 @@ const Header = () => {
                 <button className="icon-btn">
                     <Moon className="w-5 h-5" />
                 </button>
-                <div className="user-info">
-                    <div className="avatar">{getUserInitials()}</div>
-                    <span className="user-name">{getUserName()}</span>
+                <div className="user-dropdown" ref={dropdownRef}>
+                    <div
+                        className="user-info-dropdown-trigger"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setDropdownOpen(!dropdownOpen);
+                        }}
+                    >
+                        <div className="avatar">{getUserInitials()}</div>
+                        <span className="user-aadhaar">{getAadhaarDisplay()}</span>
+                        <ChevronDown className={`dropdown-icon ${dropdownOpen ? 'open' : ''}`} size={16} />
+                    </div>
+                    {dropdownOpen && (
+                        <div className="user-dropdown-menu">
+                            <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleViewProfile();
+                                }} 
+                                className="dropdown-item"
+                            >
+                                <User className="dropdown-item-icon" size={16} />
+                                <span>View Profile</span>
+                            </button>
+                            <div className="dropdown-divider"></div>
+                            <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleLogout();
+                                }} 
+                                className="dropdown-item"
+                            >
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
-                <button
-                    onClick={() => {
-                        logout();
-                        window.location.href = '/';
-                    }}
-                    className="icon-btn logout-btn"
-                    title="Logout"
-                >
-                    <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>Logout</span>
-                </button>
             </div>
         </header>
     );

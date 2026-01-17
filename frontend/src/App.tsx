@@ -7,6 +7,7 @@ import LoginPage from './pages/Auth/LoginPage';
 import CitizenDashboard from './pages/citizen/CitizenDashboard';
 import CitizenLayout from './pages/citizen/CitizenLayout';
 import Services from './pages/citizen/Services';
+import Profile from './pages/citizen/Profile';
 // Health pages
 import MedicalStoresNearMe from './pages/citizen/health/MedicalStoresNearMe';
 import HospitalsNearMe from './pages/citizen/health/HospitalsNearMe';
@@ -112,6 +113,7 @@ const AppRoutes = () => {
       >
         <Route index element={<CitizenDashboard />} />
         <Route path="services" element={<Services />} />
+        <Route path="profile" element={<Profile />} />
 
         {/* Health routes */}
         <Route path="health/medical-stores-near-me" element={<MedicalStoresNearMe />} />

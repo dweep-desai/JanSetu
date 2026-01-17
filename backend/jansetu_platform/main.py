@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .database import engine, Base
-from .routers import auth, services, admin, gateway, metrics
+from .routers import auth, services, admin, gateway, metrics, citizen
 from .middleware.logging import RequestLoggingMiddleware
 
 # Create database tables
@@ -33,6 +33,7 @@ app.include_router(services.router)
 app.include_router(admin.router)
 app.include_router(gateway.router)
 app.include_router(metrics.router)
+app.include_router(citizen.router)
 
 
 @app.get("/")
