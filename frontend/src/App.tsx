@@ -34,11 +34,17 @@ const AppRoutes = () => {
         path="/"
         element={
           <ProtectedRoute>
-            <Layout>
-              {user?.role.name === 'CITIZEN' && <CitizenDashboard />}
-              {user?.role.name === 'SERVICE_PROVIDER' && <ProviderDashboard />}
-              {user?.role.name === 'ADMIN' && <AdminDashboard />}
-            </Layout>
+            {user?.role.name === 'CITIZEN' && <CitizenDashboard />}
+            {user?.role.name === 'SERVICE_PROVIDER' && (
+              <Layout>
+                <ProviderDashboard />
+              </Layout>
+            )}
+            {user?.role.name === 'ADMIN' && (
+              <Layout>
+                <AdminDashboard />
+              </Layout>
+            )}
           </ProtectedRoute>
         }
       />
@@ -47,9 +53,7 @@ const AppRoutes = () => {
         path="/citizen/*"
         element={
           <ProtectedRoute allowedRoles={['CITIZEN']}>
-            <Layout>
-              <CitizenDashboard />
-            </Layout>
+            <CitizenDashboard />
           </ProtectedRoute>
         }
       />
