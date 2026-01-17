@@ -1,8 +1,8 @@
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import {
-    Home, Grid3X3, FileText, MapPin, BookOpen, LayoutDashboard,
-    Search, Bell, Moon, Menu, User, ChevronDown
+    Home, Grid3X3, FileText, BookOpen, LayoutDashboard,
+    Search, Bell, Moon, Menu, User, ChevronDown, HelpCircle
 } from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
 import './CitizenDashboard.css';
@@ -10,22 +10,24 @@ import './CitizenDashboard.css';
 // Sidebar Component
 const Sidebar = () => {
     const location = useLocation();
+    const navigate = useNavigate();
 
     const navItems = [
         { icon: <Home className="nav-icon" />, label: "myJanSetu", path: "/citizen", isLink: true },
         { icon: <Grid3X3 className="nav-icon" />, label: "Services", path: "/citizen/services", isLink: true },
         { icon: <FileText className="nav-icon" />, label: "DigiLocker", path: "/citizen/digilocker", isLink: true },
-        { icon: <MapPin className="nav-icon" />, label: "State", path: "#", isLink: false },
+        // State Removed
         { icon: <BookOpen className="nav-icon" />, label: "Schemes", path: "/citizen/schemes", isLink: true },
         { icon: <LayoutDashboard className="nav-icon" />, label: "Dashboard", path: "/citizen", isLink: true },
     ];
 
+    const isHelpActive = location.pathname === '/citizen/help';
+
     return (
-        <aside className="sidebar">
+        <aside className="sidebar flex flex-col justify-between">
             <nav className="sidebar-nav">
                 <ul className="nav-list">
                     {navItems.map((item, index) => {
-                        // Only highlight if exact match (not parent path)
                         const isActive = location.pathname === item.path;
 
                         if (item.isLink) {
@@ -33,7 +35,7 @@ const Sidebar = () => {
                                 <li key={index}>
                                     <NavLink
                                         to={item.path}
-                                        end={item.path === "/citizen"} // Use 'end' prop to match exactly for /citizen
+                                        end={item.path === "/citizen"}
                                         className={({ isActive: navIsActive }) =>
                                             `nav-item ${navIsActive ? 'active' : ''}`
                                         }
@@ -56,6 +58,19 @@ const Sidebar = () => {
                     })}
                 </ul>
             </nav>
+
+            <div className="p-4 border-t border-gray-200">
+                <button
+                    onClick={() => navigate('/citizen/help')}
+                    className={`flex items-center gap-3 w-full p-3 rounded-xl transition-colors ${isHelpActive
+                            ? 'bg-blue-50 text-blue-600'
+                            : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
+                        }`}
+                >
+                    <HelpCircle className="w-5 h-5" />
+                    <span className="font-medium text-sm">Help & Support</span>
+                </button>
+            </div>
         </aside>
     );
 };
@@ -153,22 +168,22 @@ const Header = () => {
                     </div>
                     {dropdownOpen && (
                         <div className="user-dropdown-menu">
-                            <button 
+                            <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleViewProfile();
-                                }} 
+                                }}
                                 className="dropdown-item"
                             >
                                 <User className="dropdown-item-icon" size={16} />
                                 <span>View Profile</span>
                             </button>
                             <div className="dropdown-divider"></div>
-                            <button 
+                            <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleLogout();
-                                }} 
+                                }}
                                 className="dropdown-item"
                             >
                                 <span>Logout</span>

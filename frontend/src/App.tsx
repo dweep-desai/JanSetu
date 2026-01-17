@@ -8,6 +8,7 @@ import CitizenDashboard from './pages/citizen/CitizenDashboard';
 import CitizenLayout from './pages/citizen/CitizenLayout';
 import Services from './pages/citizen/Services';
 import Profile from './pages/citizen/Profile';
+import HelpAndSupport from './pages/citizen/HelpAndSupport';
 // Health pages
 import MedicalStoresNearMe from './pages/citizen/health/MedicalStoresNearMe';
 import HospitalsNearMe from './pages/citizen/health/HospitalsNearMe';
@@ -114,7 +115,9 @@ const AppRoutes = () => {
         <Route index element={<CitizenDashboard />} />
         <Route path="services" element={<Services />} />
         <Route path="profile" element={<Profile />} />
-
+        <Route path="schemes" element={<Schemes />} />
+        <Route path="digilocker" element={<DigiLockerPage />} />
+        <Route path="help" element={<HelpAndSupport />} />
         {/* Health routes */}
         <Route path="health/medical-stores-near-me" element={<MedicalStoresNearMe />} />
         <Route path="health/hospitals-near-me" element={<HospitalsNearMe />} />
