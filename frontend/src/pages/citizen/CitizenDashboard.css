@@ -147,6 +147,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1.5rem;
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8.7px);
+  -webkit-backdrop-filter: blur(8.7px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   background: var(--card) !important;
   border-bottom: 1px solid var(--border) !important;
   position: sticky;

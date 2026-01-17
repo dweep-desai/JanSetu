@@ -113,7 +113,7 @@ const QuickServices = () => {
   const services = [
     { title: "Health", icon: <Heart className="service-icon" />, gradient: "health" },
     { title: "Emergency", icon: <AlertTriangle className="service-icon" />, gradient: "emergency" },
-    { title: "Travel", icon: <Train className="service-icon" />, gradient: "travel" },
+    { title: "My City", icon: <Train className="service-icon" />, gradient: "travel" },
     { title: "Utility", icon: <Fuel className="service-icon" />, gradient: "utility" },
   ];
 
