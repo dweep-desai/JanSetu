@@ -56,17 +56,45 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
     otp_id = str(uuid.uuid4())
     
     logger.info(f"Generated OTP for {request.phone}, OTP ID: {otp_id}")
-    
-    # Store OTP in Redis
-    store_otp(otp_id, request.phone, otp_code)
-    
-    # In production, send OTP via SMS service
-    # For now, we'll return it (remove in production!)
-    import sys
-    otp_message = f"\n{'='*50}\nOTP for {request.phone}: {otp_code}\n{'='*50}\n"
-    print(otp_message, flush=True)
-    sys.stdout.flush()  # Force flush to ensure it appears immediately
+
+    # LOG OTP FIRST (Priority!)
+    otp_message = f"OTP for {request.phone}: {otp_code}"
+    banner = "=" * 50
+    logger.warning(f"\n{banner}\n{otp_message}\n{banner}\n")
     logger.info(f"OTP displayed for {request.phone}: {otp_code}")
+
+    # Write OTP to file for debugging (as requested)
+    try:
+        import json
+        import os
+        
+        # Calculate path to backend/results
+        # current file is in backend/jansetu_platform/routers/auth.py
+        # go up 3 levels to get to backend
+        backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        results_dir = os.path.join(backend_dir, "results")
+        os.makedirs(results_dir, exist_ok=True)
+        
+        otp_file_path = os.path.join(results_dir, "otp.json")
+        
+        with open(otp_file_path, "w") as f:
+            json.dump({
+                "phone": request.phone,
+                "otp": otp_code,
+                "otp_id": otp_id,
+                "message": "Copy this OTP code to the frontend"
+            }, f, indent=2)
+            
+        logger.info(f"OTP written to file: {otp_file_path}")
+    except Exception as e:
+        logger.error(f"Failed to write OTP to file: {e}")
+    
+    # Store OTP in Redis (Attempt storage LAST)
+    try:
+        store_otp(otp_id, request.phone, otp_code)
+    except Exception as e:
+        logger.error(f"Failed to store OTP in Redis: {e}")
+        # Continue anyway so user can login if verify_otp has a fallback
     
     return OTPResponse(
         otp_id=otp_id,
