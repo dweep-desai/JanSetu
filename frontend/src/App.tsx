@@ -12,6 +12,9 @@ import HospitalsNearMe from './pages/citizen/health/HospitalsNearMe';
 import CallAmbulanceEmergency from './pages/citizen/health/CallAmbulanceEmergency';
 import SearchMedicines from './pages/citizen/health/SearchMedicines';
 import PoliceStationsNearMe from './pages/citizen/emergency/PoliceStationsNearMe';
+import TrafficUpdates from './pages/citizen/my-city/TrafficUpdates';
+import WeatherInfo from './pages/citizen/my-city/WeatherInfo';
+import Complaints from './pages/citizen/my-city/Complaints';
 import Schemes from './pages/citizen/Schemes';
 
 import ProviderDashboard from './pages/provider/ProviderDashboard';
@@ -83,6 +86,9 @@ const AppRoutes = () => {
         <Route path="health/call-ambulance" element={<CallAmbulanceEmergency />} />
         <Route path="health/search-medicines" element={<SearchMedicines />} />
         <Route path="emergency/police-stations-near-me" element={<PoliceStationsNearMe />} />
+        <Route path="my-city/traffic" element={<TrafficUpdates />} />
+        <Route path="my-city/weather" element={<WeatherInfo />} />
+        <Route path="my-city/complaints" element={<Complaints />} />
         <Route path="schemes" element={<Schemes />} />
       </Route>
 

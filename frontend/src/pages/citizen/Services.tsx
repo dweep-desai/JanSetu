@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
+import {
   FileText, CreditCard, GraduationCap, User, Building2, Briefcase,
-  Heart, Utensils, Shield, Bus, Train, Plane, Zap, MoreHorizontal,
+  Heart, Utensils, Shield, Bus, Plane, Zap, MoreHorizontal,
+
   ClipboardList, Calculator, BookOpen, AlertCircle, ShoppingCart,
   Landmark, Tractor, HelpCircle, ChevronRight, Grid3X3
 } from "lucide-react";
@@ -92,8 +93,8 @@ export default function Services() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 p-6">
       {/* View All Services */}
-      <Button 
-        variant="ghost" 
+      <Button
+        variant="ghost"
         className="w-full justify-between p-4 h-auto bg-card border border-border rounded-xl hover:bg-secondary"
       >
         <div className="flex items-center gap-3">
@@ -125,9 +126,9 @@ export default function Services() {
                 icon={IconComponent}
                 colorVariant={
                   service.color.includes('pink') ? 'pink' :
-                  service.color.includes('blue') ? 'blue' :
-                  service.color.includes('red') ? 'orange' :
-                  service.color.includes('green') ? 'green' : 'cyan'
+                    service.color.includes('blue') ? 'blue' :
+                      service.color.includes('red') ? 'orange' :
+                        service.color.includes('green') ? 'green' : 'cyan'
                 }
                 onClick={() => handleServiceClick(service)}
               />
@@ -149,9 +150,9 @@ export default function Services() {
                 icon={IconComponent}
                 colorVariant={
                   service.color.includes('orange') ? 'orange' :
-                  service.color.includes('pink') ? 'pink' :
-                  service.color.includes('blue') ? 'blue' :
-                  service.color.includes('red') ? 'orange' : 'cyan'
+                    service.color.includes('pink') ? 'pink' :
+                      service.color.includes('blue') ? 'blue' :
+                        service.color.includes('red') ? 'orange' : 'cyan'
                 }
                 onClick={() => handleServiceClick(service)}
               />
@@ -238,13 +239,13 @@ export default function Services() {
             View All (7)
           </Button>
         </div>
-        
-        <ServiceTabs 
-          tabs={exploreTabs} 
-          activeTab={activeTab} 
-          onTabChange={setActiveTab} 
+
+        <ServiceTabs
+          tabs={exploreTabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
           {popularServices.map((service) => (
             <ServiceCard
@@ -261,7 +262,7 @@ export default function Services() {
       {/* Categories Section */}
       <section className="animate-fade-in">
         <h2 className="text-lg font-semibold text-foreground mb-4">Categories</h2>
-        
+
         <div className="bg-card border border-border rounded-xl p-6">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
             {categories.map((category) => (

@@ -1,7 +1,8 @@
-import { 
+import {
   Building2, MapPin, Ambulance, Pill, Phone, ShieldAlert,
-  LucideIcon
+  Car, CloudSun, FileText, LucideIcon
 } from 'lucide-react';
+
 
 // Service Action Types
 export type ServiceActionType = 'navigate' | 'call' | 'custom';
@@ -56,7 +57,7 @@ const createCallAction = (phoneNumber: string): ServiceAction => ({
     if (context?.onClose) {
       context.onClose();
     }
-    
+
     // Execute the phone call immediately
     // Multiple methods to ensure it works across different browsers/devices
     const makeCall = () => {
@@ -85,7 +86,7 @@ const createCallAction = (phoneNumber: string): ServiceAction => ({
         }
       }
     };
-    
+
     // Execute immediately
     makeCall();
   }
@@ -187,17 +188,59 @@ export const emergencyServices: ServiceDefinition[] = [
   callAmbulanceService // Use the same shared service object from Health Services
 ];
 
+// My City Services Definitions
+export const myCityServices: ServiceDefinition[] = [
+  {
+    id: 'traffic-updates',
+    title: 'Traffic Updates',
+    description: 'Check congestion & delays',
+    icon: Car,
+    category: 'travel',
+    color: 'bg-orange-50 hover:bg-orange-100 border-orange-200',
+    action: createNavigateAction('/citizen/my-city/traffic'),
+    metadata: {
+      path: '/citizen/my-city/traffic'
+    }
+  },
+  {
+    id: 'weather-info',
+    title: 'Weather Info',
+    description: 'Pollution & forecast',
+    icon: CloudSun,
+    category: 'utility',
+    color: 'bg-blue-50 hover:bg-blue-100 border-blue-200',
+    action: createNavigateAction('/citizen/my-city/weather'),
+    metadata: {
+      path: '/citizen/my-city/weather'
+    }
+  },
+  {
+    id: 'complaints',
+    title: 'Complaints',
+    description: 'Report civic issues',
+    icon: FileText,
+    category: 'general',
+    color: 'bg-purple-50 hover:bg-purple-100 border-purple-200',
+    action: createNavigateAction('/citizen/my-city/complaints'),
+    metadata: {
+      path: '/citizen/my-city/complaints'
+    }
+  }
+];
+
+
 // Helper function to get services by category
 export const getServicesByCategory = (category: ServiceDefinition['category']): ServiceDefinition[] => {
-  const allServices = [...healthServices, ...emergencyServices];
+  const allServices = [...healthServices, ...emergencyServices, ...myCityServices];
   return allServices.filter(service => service.category === category);
 };
 
 // Helper function to get service by ID
 export const getServiceById = (id: string): ServiceDefinition | undefined => {
-  const allServices = [...healthServices, ...emergencyServices];
+  const allServices = [...healthServices, ...emergencyServices, ...myCityServices];
   return allServices.find(service => service.id === id);
 };
+
 
 // Helper function to execute service action
 export const executeServiceAction = (
@@ -226,5 +269,7 @@ export const executeServiceAction = (
 // Export all services
 export const allServices: ServiceDefinition[] = [
   ...healthServices,
-  ...emergencyServices
+  ...emergencyServices,
+  ...myCityServices
 ];
+
