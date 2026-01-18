@@ -23,7 +23,7 @@ const Sidebar = () => {
     const isHelpActive = location.pathname === '/citizen/help';
 
     return (
-        <aside className="w-64 bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col justify-between hidden md:flex shrink-0 z-40">
+        <aside className="w-60 bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col justify-between hidden md:flex shrink-0 z-40">
             <nav className="p-4 space-y-1">
                 <div className="px-3 py-4 mb-2 flex items-center gap-2 lg:hidden">
                     <span className="font-bold text-xl text-blue-600">JanSetu</span>
@@ -262,9 +262,9 @@ const CitizenLayout = () => {
     return (
         <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
             <Sidebar />
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden ml-0">
                 <Header />
-                <main className="main-content">
+                <main className="flex-1 overflow-y-auto px-6 py-8 md:px-8 md:py-10 max-w-7xl mx-auto w-full">
                     <Outlet />
                     {showChatbot && <Chatbot />}
                 </main>

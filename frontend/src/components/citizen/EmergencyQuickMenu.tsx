@@ -17,7 +17,7 @@ const EmergencyQuickMenu: React.FC<EmergencyQuickMenuProps> = ({ isOpen, onClose
         if (service.action.type !== 'call' && event) {
             event.preventDefault();
         }
-        
+
         // Execute the service action
         executeServiceAction(service, { navigate, onClose });
     };
@@ -47,11 +47,11 @@ const EmergencyQuickMenu: React.FC<EmergencyQuickMenuProps> = ({ isOpen, onClose
                                 className={`flex items-start p-4 text-left border rounded-xl transition-all duration-200 ${service.color} group`}
                             >
                                 <div className="p-3 bg-white rounded-lg shadow-sm mr-4 group-hover:scale-110 transition-transform">
-                                    <IconComponent className="w-8 h-8" style={{ 
+                                    <IconComponent className="w-8 h-8" style={{
                                         color: service.color.includes('orange') ? '#ea580c' :
-                                               service.color.includes('pink') ? '#db2777' :
-                                               service.color.includes('blue') ? '#2563eb' :
-                                               service.color.includes('red') ? '#dc2626' : '#6b7280'
+                                            service.color.includes('pink') ? '#db2777' :
+                                                service.color.includes('blue') ? '#2563eb' :
+                                                    service.color.includes('red') ? '#dc2626' : '#6b7280'
                                     }} />
                                 </div>
                                 <div>

@@ -4,7 +4,7 @@ import {
   Heart, AlertTriangle, Castle,
   Bookmark, ChevronLeft, ChevronRight, Phone, Calculator,
   Star, Cloud, Wind, Droplets, Mail, X, Bus,
-  Sun, Calendar
+  Sun, Clock
 } from "lucide-react";
 import HealthQuickMenu from '../../components/citizen/HealthQuickMenu';
 import EmergencyQuickMenu from '../../components/citizen/EmergencyQuickMenu';
@@ -12,34 +12,7 @@ import MyCityQuickMenu from '../../components/citizen/MyCityQuickMenu';
 import TransportQuickMenu from '../../components/citizen/TransportQuickMenu';
 import FinancialCalculatorModal from '../../components/citizen/FinancialCalculatorModal';
 import { getWeather } from '../../services/weatherService';
-import { useAuth } from '../../context/AuthContext';
 
-
-// Welcome Header
-const WelcomeHeader = () => {
-  const { user } = useAuth();
-  const date = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-  return (
-    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
-          Welcome back, <span className="text-blue-600">{user?.aadhar ? `User ${user.aadhar.slice(-4)}` : 'Citizen'}</span>
-        </h1>
-        <p className="text-slate-500 mt-1 flex items-center gap-2 text-sm font-medium">
-          <Calendar className="w-4 h-4 text-slate-400" />
-          {date}
-        </p>
-      </div>
-      <div className="flex items-center gap-3">
-        <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-100 flex items-center gap-2">
-          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-          Verified Citizen
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // Quick Services Component
 const QuickServices = () => {
@@ -51,31 +24,39 @@ const QuickServices = () => {
 
   const services = [
     {
-      title: "Health",
-      icon: <Heart className="w-8 h-8 text-pink-500" />,
-      bg: "bg-gradient-to-br from-pink-50 to-pink-100/50 hover:from-pink-100 hover:to-pink-200/50",
-      border: "border-pink-200/60",
+      title: "Health Services",
+      icon: <Heart className="w-7 h-7 text-rose-600" />,
+      bg: "bg-gradient-to-br from-white via-rose-50 to-rose-100 hover:from-rose-50 hover:to-rose-200/60",
+      border: "border-rose-200",
+      shadow: "shadow-sm shadow-rose-100",
+      textColor: "text-rose-900",
       action: () => setIsHealthMenuOpen(true)
     },
     {
       title: "Emergency",
-      icon: <AlertTriangle className="w-8 h-8 text-orange-500" />,
-      bg: "bg-gradient-to-br from-orange-50 to-orange-100/50 hover:from-orange-100 hover:to-orange-200/50",
-      border: "border-orange-200/60",
+      icon: <AlertTriangle className="w-7 h-7 text-orange-600" />,
+      bg: "bg-gradient-to-br from-white via-orange-50 to-orange-100 hover:from-orange-50 hover:to-orange-200/60",
+      border: "border-orange-200",
+      shadow: "shadow-sm shadow-orange-100",
+      textColor: "text-orange-900",
       action: () => setIsEmergencyMenuOpen(true)
     },
     {
       title: "My City",
-      icon: <Castle className="w-8 h-8 text-emerald-500" />,
-      bg: "bg-gradient-to-br from-emerald-50 to-emerald-100/50 hover:from-emerald-100 hover:to-emerald-200/50",
-      border: "border-emerald-200/60",
+      icon: <Castle className="w-7 h-7 text-teal-600" />,
+      bg: "bg-gradient-to-br from-white via-teal-50 to-teal-100 hover:from-teal-50 hover:to-teal-200/60",
+      border: "border-teal-200",
+      shadow: "shadow-sm shadow-teal-100",
+      textColor: "text-teal-900",
       action: () => setIsMyCityMenuOpen(true)
     },
     {
       title: "Transport",
-      icon: <Bus className="w-8 h-8 text-blue-500" />,
-      bg: "bg-gradient-to-br from-blue-50 to-blue-100/50 hover:from-blue-100 hover:to-blue-200/50",
-      border: "border-blue-200/60",
+      icon: <Bus className="w-7 h-7 text-indigo-600" />,
+      bg: "bg-gradient-to-br from-white via-indigo-50 to-indigo-100 hover:from-indigo-50 hover:to-indigo-200/60",
+      border: "border-indigo-200",
+      shadow: "shadow-sm shadow-indigo-100",
+      textColor: "text-indigo-900",
       action: () => setIsTransportMenuOpen(true)
     },
   ];
@@ -83,26 +64,29 @@ const QuickServices = () => {
 
   return (
     <>
-      <section className="mb-10">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Star className="w-5 h-5 text-blue-600" />
+      <section className="mb-12 pt-2">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-blue-600 rounded-lg shadow-sm">
+            <Star className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Quick Services</h2>
-            <p className="text-sm text-slate-500">Access essential services in one click</p>
+            <h2 className="text-xl font-bold text-slate-900">Quick Services</h2>
+            <p className="text-sm text-slate-500 font-medium">Access essential services in one click</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           {services.map((service, index) => (
             <button
               key={index}
               onClick={service.action}
-              className={`group relative flex flex-col justify-between p-6 h-40 rounded-2xl border ${service.border} ${service.bg} transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
+              className={`group relative flex flex-col justify-between p-5 h-36 rounded-2xl border ${service.border} ${service.bg} transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${service.shadow}`}
             >
-              <span className="text-lg font-bold text-slate-800 group-hover:text-slate-900">{service.title}</span>
-              <div className="self-end p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <div className="flex justify-between items-start w-full">
+                <span className={`text-lg font-bold ${service.textColor} text-left leading-tight`}>{service.title}</span>
+              </div>
+
+              <div className="self-end p-2.5 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-white/50 group-hover:scale-110 transition-transform duration-300">
                 {service.icon}
               </div>
             </button>
@@ -135,42 +119,52 @@ const QuickServices = () => {
 // Recent Services Component
 const RecentServices = () => {
   const recentServices = [
-    { icon: "🏛️", name: "CBSE", category: "Education, Skills & Employment", color: "bg-blue-100 text-blue-700" },
-    { icon: "🌾", name: "Agriculture Dept", category: "General", color: "bg-green-100 text-green-700" },
-    { icon: "🏥", name: "ABHA", category: "Health & Wellness", color: "bg-teal-100 text-teal-700" },
-    { icon: "👶", name: "CHILDLINE 1098", category: "Women & Child", color: "bg-pink-100 text-pink-700" },
+    { icon: "🏛️", name: "CBSE", category: "Education", color: "bg-blue-50 text-blue-600 border-blue-100" },
+    { icon: "🌾", name: "Agriculture Dept", category: "General", color: "bg-green-50 text-green-600 border-green-100" },
+    { icon: "🏥", name: "ABHA", category: "Health", color: "bg-teal-50 text-teal-600 border-teal-100" },
+    { icon: "👶", name: "CHILDLINE 1098", category: "Women & Child", color: "bg-pink-50 text-pink-600 border-pink-100" },
   ];
 
   return (
-    <section className="mb-10">
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-lg font-bold text-slate-900">Recently Used Services</h2>
+    <section className="mb-12">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-bold text-slate-900 border-l-4 border-blue-600 pl-3">Recently Used</h2>
         <div className="flex gap-2">
-          <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+          <button className="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-slate-600 transition-all border border-transparent hover:border-slate-200 hover:shadow-sm">
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+          <button className="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-slate-600 transition-all border border-transparent hover:border-slate-200 hover:shadow-sm">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {recentServices.map((service, index) => (
-          <div key={index} className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group hover:border-blue-200">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl shrink-0 ${service.color}`}>
-              {service.icon}
+      {recentServices.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {recentServices.map((service, index) => (
+            <div key={index} className="flex items-center gap-4 p-4 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group hover:border-blue-200 hover:-translate-y-0.5">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0 border ${service.color}`}>
+                {service.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-slate-900 text-sm truncate group-hover:text-blue-600 transition-colors">{service.name}</h3>
+                <p className="text-xs text-slate-500 truncate mt-0.5">{service.category}</p>
+              </div>
+              <button className="text-slate-300 hover:text-blue-500 transition-colors opacity-0 group-hover:opacity-100 p-1">
+                <Bookmark className="w-4 h-4" />
+              </button>
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-slate-900 text-sm truncate group-hover:text-blue-600 transition-colors">{service.name}</h3>
-              <p className="text-xs text-slate-500 truncate">{service.category}</p>
-            </div>
-            <button className="text-slate-300 hover:text-blue-500 transition-colors">
-              <Bookmark className="w-4 h-4" />
-            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center p-8 bg-white border border-slate-200/60 rounded-2xl border-dashed">
+          <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+            <Clock className="w-6 h-6 text-slate-400" />
           </div>
-        ))}
-      </div>
+          <p className="text-slate-900 font-medium">No recent services yet</p>
+          <p className="text-slate-500 text-sm">Services you access will appear here</p>
+        </div>
+      )}
     </section>
   );
 };
@@ -265,11 +259,11 @@ const HelplineModal = ({ category, onClose }: { category: HelplineCategoryData |
   if (!category) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-[2px] animate-in fade-in duration-200">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100">
-        <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
-          <h2 className="text-xl font-bold flex items-center gap-3 text-slate-800">
-            <span className="text-2xl filter drop-shadow-sm">{category.icon}</span>
+        <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/80 backdrop-blur-sm">
+          <h2 className="text-lg font-bold flex items-center gap-3 text-slate-800">
+            <span className="text-2xl">{category.icon}</span>
             {category.label} Helplines
           </h2>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200/50 text-slate-400 hover:text-slate-600 transition-colors">
@@ -277,11 +271,11 @@ const HelplineModal = ({ category, onClose }: { category: HelplineCategoryData |
           </button>
         </div>
 
-        <div className="p-6 max-h-[60vh] overflow-y-auto space-y-3 custom-scrollbar">
+        <div className="p-5 max-h-[60vh] overflow-y-auto space-y-3 custom-scrollbar">
           {category.contacts.map((contact, idx) => (
-            <div key={idx} className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-blue-200 hover:shadow-sm transition-all group">
+            <div key={idx} className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200/60 hover:border-blue-200 hover:shadow-sm transition-all group">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-lg border border-slate-100">
+                <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-lg border border-slate-100 shrink-0">
                   {category.icon}
                 </div>
                 <div>
@@ -304,7 +298,7 @@ const HelplineModal = ({ category, onClose }: { category: HelplineCategoryData |
         </div>
 
         <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
-          <button onClick={onClose} className="px-5 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors font-medium text-sm shadow-sm">
+          <button onClick={onClose} className="px-5 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors font-medium text-sm shadow-sm hover:shadow">
             Close
           </button>
         </div>
@@ -319,9 +313,9 @@ const HelplineCategories = () => {
 
   return (
     <>
-      <section className="mb-10">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="p-2 bg-orange-100 rounded-lg">
+      <section className="mb-12">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-orange-50 rounded-lg">
             <Phone className="w-5 h-5 text-orange-600" />
           </div>
           <h2 className="text-lg font-bold text-slate-900">Essential Helpline Numbers</h2>
@@ -332,9 +326,9 @@ const HelplineCategories = () => {
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category)}
-              className="flex flex-col items-center gap-3 p-4 bg-white border border-slate-200 rounded-2xl hover:border-orange-200 hover:shadow-md transition-all duration-200 group"
+              className="flex flex-col items-center gap-3 p-5 bg-white border border-slate-200/60 rounded-2xl hover:border-orange-200 hover:shadow-md transition-all duration-200 group hover:-translate-y-0.5"
             >
-              <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-3xl border border-slate-100 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
+              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-2xl border border-slate-100 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors shadow-sm">
                 {category.icon}
               </div>
               <span className="text-sm font-semibold text-slate-600 group-hover:text-slate-900 text-center">{category.label}</span>
@@ -499,7 +493,7 @@ const FinancialCalculatorCard = ({ onOpen }: { onOpen: () => void }) => {
 // Promo Cards Component
 const PromoCards = ({ onOpenCalculator }: { onOpenCalculator: () => void }) => {
   return (
-    <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+    <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
       <WeatherAQICard />
       <FinancialCalculatorCard onOpen={onOpenCalculator} />
     </section>
@@ -514,7 +508,6 @@ const CitizenDashboard = () => {
 
   return (
     <div className="animate-in fade-in duration-500">
-      <WelcomeHeader />
       <QuickServices />
       <RecentServices />
       <HelplineCategories />
