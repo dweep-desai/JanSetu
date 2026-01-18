@@ -63,8 +63,8 @@ const Sidebar = () => {
                 <button
                     onClick={() => navigate('/citizen/help')}
                     className={`flex items-center gap-3 w-full p-3 rounded-xl transition-colors ${isHelpActive
-                            ? 'bg-blue-50 text-blue-600'
-                            : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
+                        ? 'bg-blue-50 text-blue-600'
+                        : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
                         }`}
                 >
                     <HelpCircle className="w-5 h-5" />
@@ -196,7 +196,26 @@ const Header = () => {
     );
 };
 
+import Chatbot from '../../components/citizen/Chatbot';
+
 const CitizenLayout = () => {
+    const location = useLocation();
+
+    // Hide chatbot on Dashboard (index /citizen) and Help (/citizen/help)
+    // The index route path is '/citizen' exactly (usually, but let's check strictness)
+    // If user visits /citizen/dashboard (if that redirects), we want to be safe.
+    // Based on App.tsx, the routes are:
+    // /citizen (Dashboard)
+    // /citizen/help (Help)
+    // So if pathname IS exactly '/citizen' OR '/citizen/help', hide it.
+    // Also user might access /citizen/ (trailing slash).
+
+    const pathname = location.pathname.toLowerCase().replace(/\/$/, ""); // Remove trailing slash if any
+    const isHelp = pathname === '/citizen/help';
+
+    // Only hide on Help page now, as per user request to include Dashboard
+    const showChatbot = !isHelp;
+
     return (
         <div className="dashboard">
             <Sidebar />
@@ -204,6 +223,7 @@ const CitizenLayout = () => {
                 <Header />
                 <main className="main-content">
                     <Outlet />
+                    {showChatbot && <Chatbot />}
                 </main>
             </div>
         </div>
