@@ -2,19 +2,25 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Optional
 import os
-from groq import Groq
 from ..config import settings
+
+# Optional import for Groq - gracefully handle if not installed
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+    # Initialize Groq client only if available
+    # Ensure GROQ_API_KEY is set in .env or config
+    groq_api_key = getattr(settings, 'GROQ_API_KEY', '') or ''
+    client = Groq(api_key=groq_api_key) if groq_api_key else None
+except ImportError:
+    GROQ_AVAILABLE = False
+    client = None
+    print("Warning: groq module not installed. Chat functionality will be disabled.")
 
 router = APIRouter(
     prefix="/chat",
     tags=["chat"],
     responses={404: {"description": "Not found"}},
-)
-
-# Initialize Groq client
-# Ensure GROQ_API_KEY is set in .env or config
-client = Groq(
-    api_key=settings.GROQ_API_KEY,
 )
 
 class ChatMessage(BaseModel):
@@ -82,6 +88,12 @@ Your goal is to help citizens navigate government services, schemes, and tools a
 
 @router.post("/", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
+    if not GROQ_AVAILABLE or client is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Chat service is not available. The groq module is not installed or configured."
+        )
+    
     try:
         # Construct the conversation history
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]

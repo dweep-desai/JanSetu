@@ -84,13 +84,18 @@ const ProviderDashboard: React.FC = () => {
   useEffect(() => {
     fetchData();
     detectProviderType();
+    // Always try to fetch products in case user is mKisan provider
+    fetchProducts();
   }, []);
 
   useEffect(() => {
     if (providerType === 'esanjeevani') {
       fetchAppointments();
     } else if (providerType === 'mkisan') {
-      fetchProducts();
+      // Only fetch if not already fetched during detection
+      if (products.length === 0) {
+        fetchProducts();
+      }
       setActiveTab('products');
     }
   }, [providerType]);
@@ -112,13 +117,14 @@ const ProviderDashboard: React.FC = () => {
     try {
       // Try to fetch appointments to check if e-Sanjeevani provider
       try {
-        const response = await api.get('/appointments/provider/appointments');
-        setAppointments(response.data || []);
+        const appointmentsResponse = await api.get('/appointments/provider/appointments');
+        setAppointments(appointmentsResponse.data || []);
         setProviderType('esanjeevani');
         return;
       } catch (e: any) {
-        // Not an e-Sanjeevani provider, try fetching products for mKisan
-        if (e.response?.status === 404 || e.response?.status === 403) {
+        // If appointments fails (403/404), user is likely mKisan provider
+        // For mKisan providers, always fetch and show products
+        if (e.response?.status === 403 || e.response?.status === 404 || e.response?.status === 401) {
           try {
             const productsResponse = await api.get('/mkisan/products');
             setProducts(productsResponse.data || []);
@@ -126,13 +132,34 @@ const ProviderDashboard: React.FC = () => {
             setActiveTab('products');
             return;
           } catch (productsError: any) {
-            // Could be either type or not registered yet
-            console.log('Provider type detection: could not determine type');
+            console.error('Could not fetch products:', productsError);
+            // Still set as mKisan even if products fetch fails
+            setProviderType('mkisan');
+            setActiveTab('products');
+          }
+        } else {
+          // Other error, try products as fallback
+          try {
+            const productsResponse = await api.get('/mkisan/products');
+            setProducts(productsResponse.data || []);
+            setProviderType('mkisan');
+            setActiveTab('products');
+          } catch (productsError: any) {
+            console.error('Fallback product fetch failed:', productsError);
           }
         }
       }
     } catch (error) {
       console.error('Failed to detect provider type:', error);
+      // Final fallback: try to fetch products
+      try {
+        const productsResponse = await api.get('/mkisan/products');
+        setProducts(productsResponse.data || []);
+        setProviderType('mkisan');
+        setActiveTab('products');
+      } catch (fallbackError) {
+        console.error('Final fallback product fetch failed:', fallbackError);
+      }
     }
   };
 
@@ -308,7 +335,7 @@ const ProviderDashboard: React.FC = () => {
               )}
             </button>
           )}
-          {providerType === 'mkisan' && (
+          {(providerType === 'mkisan' || (providerType !== 'esanjeevani' && products.length > 0)) && (
             <button
               onClick={() => setActiveTab('products')}
               className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 justify-center ${activeTab === 'products'

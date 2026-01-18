@@ -30,6 +30,7 @@ const Mkisaan = () => {
   const [myProducts, setMyProducts] = useState<Product[]>([]);
   const [sellerStatus, setSellerStatus] = useState<SellerStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
@@ -62,6 +63,8 @@ const Mkisaan = () => {
 
   const checkSellerStatus = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const response = await api.get('/mkisan/check-kisan-id');
       setSellerStatus(response.data);
       if (response.data.is_registered_as_seller) {
@@ -69,6 +72,13 @@ const Mkisaan = () => {
       }
     } catch (err: any) {
       console.error('Error checking seller status:', err);
+      const errorMessage = err.response?.data?.detail || err.message || 'Failed to load mKisan data';
+      setError(errorMessage);
+      // Set default seller status if API fails
+      setSellerStatus({
+        has_kisan_id: false,
+        is_registered_as_seller: false
+      });
     } finally {
       setLoading(false);
     }
@@ -179,7 +189,25 @@ const Mkisaan = () => {
       <div className="max-w-7xl mx-auto p-4">
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600">Loading mKisan data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error message if there's an error but still allow user to see the page
+  if (error && !sellerStatus) {
+    return (
+      <div className="max-w-7xl mx-auto p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+          <h2 className="text-lg font-semibold text-red-800 mb-2">Error Loading mKisan</h2>
+          <p className="text-red-600">{error}</p>
+          <button
+            onClick={checkSellerStatus}
+            className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -191,6 +219,14 @@ const Mkisaan = () => {
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Mkisaan - Buyer and Seller Platform</h1>
         <p className="text-gray-600">Connect farmers with buyers</p>
       </div>
+
+      {error && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+          <p className="text-yellow-800">
+            <strong>Warning:</strong> {error}
+          </p>
+        </div>
+      )}
 
       {/* Registration Notice */}
       {!sellerStatus?.has_kisan_id && (

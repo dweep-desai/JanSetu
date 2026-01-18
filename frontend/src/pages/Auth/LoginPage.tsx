@@ -150,10 +150,7 @@ const LoginPage: React.FC = () => {
         }
         registrationData.years_of_experience = spYearsOfExperience ? parseInt(spYearsOfExperience) : null;
       } else if (spRequestType === 'MKISAN') {
-        registrationData.provider_category = spProviderCategory;
-        registrationData.business_license = spBusinessLicense || null;
-        registrationData.gst_number = spGstNumber || null;
-        registrationData.years_in_business = spYearsInBusiness ? parseInt(spYearsInBusiness) : null;
+        registrationData.provider_category = 'BUYER';
       }
 
       const response = await api.post('/sp-registration/register', registrationData);
@@ -526,40 +523,12 @@ const LoginPage: React.FC = () => {
                     {spRequestType === 'MKISAN' && (
                       <div className="p-4 bg-green-50/50 rounded-xl border border-green-100 space-y-4 animate-in zoom-in-95 duration-200">
                         <select
-                          value={spProviderCategory}
-                          onChange={(e) => setSpProviderCategory(e.target.value)}
-                          className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
-                          required
+                          value="BUYER"
+                          disabled
+                          className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 cursor-not-allowed"
                         >
-                          <option value="">Select Category</option>
-                          <option value="WHOLESALER">Wholesaler</option>
-                          <option value="RETAILER">Retailer</option>
-                          <option value="EXPORTER">Exporter</option>
-                          <option value="OTHER">Other</option>
+                          <option value="BUYER">Buyer</option>
                         </select>
-                        <input
-                          type="text"
-                          value={spBusinessLicense}
-                          onChange={(e) => setSpBusinessLicense(e.target.value)}
-                          placeholder="Business License No."
-                          className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
-                        />
-                        <div className="grid grid-cols-2 gap-3">
-                          <input
-                            type="text"
-                            value={spGstNumber}
-                            onChange={(e) => setSpGstNumber(e.target.value)}
-                            placeholder="GST No."
-                            className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
-                          />
-                          <input
-                            type="number"
-                            value={spYearsInBusiness}
-                            onChange={(e) => setSpYearsInBusiness(e.target.value)}
-                            placeholder="Years in Biz"
-                            className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
-                          />
-                        </div>
                       </div>
                     )}
 
