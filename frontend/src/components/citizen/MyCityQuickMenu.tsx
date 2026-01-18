@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, X } from 'lucide-react';
 import { myCityServices } from '../../services/serviceDefinitions';
-import '../../pages/citizen/CitizenDashboard.css';
 
 interface MyCityQuickMenuProps {
     isOpen: boolean;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Search, ChevronRight, SlidersHorizontal, Building, GraduationCap, HeartPulse, Home, Scale, Cpu, Briefcase, Users, Trophy, Bus, Plane, Wrench, Sprout, Landmark, Banknote, Map as MapIcon, Globe, Radio, Droplet, Sun, Fuel, Train, BookOpen, BarChart, Shirt, Fish, Utensils, Anchor } from 'lucide-react';
-import './CitizenDashboard.css'; // Reusing dashboard styles
 
 // Types for our data
 interface StatCard {

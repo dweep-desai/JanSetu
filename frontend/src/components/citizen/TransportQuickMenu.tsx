@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Bus, X } from 'lucide-react';
 import { transportUtilityServices } from '../../services/serviceDefinitions';
-import '../../pages/citizen/CitizenDashboard.css';
 
 interface TransportQuickMenuProps {
     isOpen: boolean;

@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, X } from 'lucide-react';
 import { emergencyServices, executeServiceAction } from '../../services/serviceDefinitions';
-import '../../pages/citizen/CitizenDashboard.css';
 
 interface EmergencyQuickMenuProps {
     isOpen: boolean;

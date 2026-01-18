@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { healthServices, executeServiceAction } from '../../services/serviceDefinitions';
-import '../../pages/citizen/CitizenDashboard.css'; // Reusing dashboard styles for consistency
 
 interface HealthQuickMenuProps {
     isOpen: boolean;
