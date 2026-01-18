@@ -352,49 +352,103 @@ const ProviderDashboard: React.FC = () => {
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-              <Calendar size={20} />
+        {providerType === 'esanjeevani' ? (
+          <>
+            {/* Healthcare Provider Stats */}
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <Calendar size={20} />
+                </div>
+                <span className="text-xs font-medium text-slate-400">Action Needed</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900">{pendingAppointments}</div>
+              <div className="text-sm text-slate-500">Pending Appointments</div>
             </div>
-            <span className="text-xs font-medium text-slate-400">Action Needed</span>
-          </div>
-          <div className="text-2xl font-bold text-slate-900">{pendingAppointments}</div>
-          <div className="text-sm text-slate-500">Pending Appointments</div>
-        </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-green-50 text-green-600 rounded-lg">
-              <CheckCircle size={20} />
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-2 bg-green-50 text-green-600 rounded-lg">
+                  <CheckCircle size={20} />
+                </div>
+                <span className="text-xs font-medium text-slate-400">Total</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900">{services.filter(s => s.status === 'APPROVED').length}</div>
+              <div className="text-sm text-slate-500">Active Services</div>
             </div>
-            <span className="text-xs font-medium text-slate-400">Total</span>
-          </div>
-          <div className="text-2xl font-bold text-slate-900">{services.filter(s => s.status === 'APPROVED').length}</div>
-          <div className="text-sm text-slate-500">Active Services</div>
-        </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
-              <Users size={20} />
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                  <Users size={20} />
+                </div>
+                <span className="text-xs font-medium text-slate-400">Lifetime</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900">{appointments.length}</div>
+              <div className="text-sm text-slate-500">Total Appointments</div>
             </div>
-            <span className="text-xs font-medium text-slate-400">Lifetime</span>
-          </div>
-          <div className="text-2xl font-bold text-slate-900">{appointments.length}</div>
-          <div className="text-sm text-slate-500">Total Appointments</div>
-        </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-orange-50 text-orange-600 rounded-lg">
-              <Layers size={20} />
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-2 bg-orange-50 text-orange-600 rounded-lg">
+                  <Layers size={20} />
+                </div>
+                <span className="text-xs font-medium text-slate-400">Status</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900">{services.length + requests.length}</div>
+              <div className="text-sm text-slate-500">Services Submitted</div>
             </div>
-            <span className="text-xs font-medium text-slate-400">Status</span>
-          </div>
-          <div className="text-2xl font-bold text-slate-900">{services.length + requests.length}</div>
-          <div className="text-sm text-slate-500">Services Submitted</div>
-        </div>
+          </>
+        ) : (
+          <>
+            {/* Agricultural (mKisan) Provider Stats */}
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-2 bg-green-50 text-green-600 rounded-lg">
+                  <Package size={20} />
+                </div>
+                <span className="text-xs font-medium text-slate-400">Available</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900">{products.length}</div>
+              <div className="text-sm text-slate-500">Available Products</div>
+            </div>
+
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <ShoppingCart size={20} />
+                </div>
+                <span className="text-xs font-medium text-slate-400">In Cart</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900">{cart.length}</div>
+              <div className="text-sm text-slate-500">Cart Items</div>
+            </div>
+
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                  <FileText size={20} />
+                </div>
+                <span className="text-xs font-medium text-slate-400">Total</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900">{purchases.length}</div>
+              <div className="text-sm text-slate-500">Total Purchases</div>
+            </div>
+
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-transform duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-2 bg-orange-50 text-orange-600 rounded-lg">
+                  <Activity size={20} />
+                </div>
+                <span className="text-xs font-medium text-slate-400">Total Value</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900">
+                ₹{purchases.reduce((sum, p) => sum + (p.total_amount || 0), 0).toFixed(0)}
+              </div>
+              <div className="text-sm text-slate-500">Purchase Value</div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Main Content */}
