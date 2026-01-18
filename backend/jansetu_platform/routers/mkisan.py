@@ -489,3 +489,232 @@ async def delete_product(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error deleting product: {str(e)}"
         )
+
+
+class CreatePurchaseRequest(BaseModel):
+    product_id: str
+    quantity_purchased: str
+    purchase_price_per_unit: float
+    total_amount: float
+    notes: Optional[str] = None
+
+
+class PurchaseResponse(BaseModel):
+    purchase_id: str
+    mkisan_provider_id: str
+    product_id: str
+    product_name: str
+    purchase_date: str
+    quantity_purchased: str
+    purchase_price_per_unit: float
+    total_amount: float
+    status: str
+    notes: Optional[str] = None
+    created_at: str
+
+
+@router.post("/purchases", response_model=PurchaseResponse)
+async def create_purchase(
+    request: CreatePurchaseRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Create a purchase order for a product."""
+    try:
+        aadhaar_hash = hashlib.sha256(current_user.aadhar.encode()).hexdigest()
+        
+        # Get service_provider_id
+        sp_query = text("SELECT service_provider_id FROM service_providers WHERE aadhaar_hash = :aadhaar_hash")
+        sp_result = db.execute(sp_query, {"aadhaar_hash": aadhaar_hash}).fetchone()
+        
+        if not sp_result:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Service provider not found"
+            )
+        
+        service_provider_id = sp_result[0]
+        
+        # Get mkisan_provider_id
+        mkisan_query = text("""
+            SELECT mkisan_provider_id 
+            FROM mkisan_service_providers 
+            WHERE service_provider_id = :service_provider_id
+        """)
+        mkisan_result = db.execute(mkisan_query, {"service_provider_id": service_provider_id}).fetchone()
+        
+        if not mkisan_result:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You must be registered as an mKisan buyer first"
+            )
+        
+        mkisan_provider_id = mkisan_result[0]
+        
+        # Verify product exists
+        product_query = text("SELECT product_name FROM mkisan_products WHERE product_id = :product_id")
+        product_result = db.execute(product_query, {"product_id": request.product_id}).fetchone()
+        
+        if not product_result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Product not found"
+            )
+        
+        product_name = product_result[0]
+        purchase_id = str(uuid.uuid4())
+        
+        # Create purchase
+        if settings.DATABASE_URL.startswith('sqlite'):
+            insert_query = text("""
+                INSERT INTO mkisan_purchases 
+                (purchase_id, mkisan_provider_id, product_id, quantity_purchased, 
+                 purchase_price_per_unit, total_amount, status, notes)
+                VALUES (:purchase_id, :mkisan_provider_id, :product_id, :quantity_purchased,
+                        :purchase_price_per_unit, :total_amount, 'CONFIRMED', :notes)
+            """)
+        else:
+            insert_query = text("""
+                INSERT INTO mkisan_purchases 
+                (purchase_id, mkisan_provider_id, product_id, quantity_purchased,
+                 purchase_price_per_unit, total_amount, status, notes)
+                VALUES (:purchase_id, :mkisan_provider_id, :product_id, :quantity_purchased,
+                        :purchase_price_per_unit, :total_amount, 'CONFIRMED', :notes)
+            """)
+        
+        db.execute(insert_query, {
+            "purchase_id": purchase_id,
+            "mkisan_provider_id": mkisan_provider_id,
+            "product_id": request.product_id,
+            "quantity_purchased": request.quantity_purchased,
+            "purchase_price_per_unit": request.purchase_price_per_unit,
+            "total_amount": request.total_amount,
+            "notes": request.notes
+        })
+        
+        db.commit()
+        
+        # Fetch created purchase with product name
+        if settings.DATABASE_URL.startswith('sqlite'):
+            fetch_query = text("""
+                SELECT 
+                    p.purchase_id, p.mkisan_provider_id, p.product_id, p.purchase_date,
+                    p.quantity_purchased, p.purchase_price_per_unit, p.total_amount,
+                    p.status, p.notes, p.created_at,
+                    pr.product_name
+                FROM mkisan_purchases p
+                JOIN mkisan_products pr ON p.product_id = pr.product_id
+                WHERE p.purchase_id = :purchase_id
+            """)
+        else:
+            fetch_query = text("""
+                SELECT 
+                    p.purchase_id, p.mkisan_provider_id, p.product_id, p.purchase_date,
+                    p.quantity_purchased, p.purchase_price_per_unit, p.total_amount,
+                    p.status, p.notes, p.created_at,
+                    pr.product_name
+                FROM mkisan_purchases p
+                JOIN mkisan_products pr ON p.product_id = pr.product_id
+                WHERE p.purchase_id = :purchase_id
+            """)
+        
+        result = db.execute(fetch_query, {"purchase_id": purchase_id}).fetchone()
+        
+        return {
+            "purchase_id": str(result[0]),
+            "mkisan_provider_id": str(result[1]),
+            "product_id": str(result[2]),
+            "product_name": result[10],
+            "purchase_date": str(result[3]),
+            "quantity_purchased": result[4],
+            "purchase_price_per_unit": float(result[5]),
+            "total_amount": float(result[6]),
+            "status": str(result[7]),
+            "notes": result[8],
+            "created_at": str(result[9])
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error creating purchase: {str(e)}"
+        )
+
+
+@router.get("/purchases", response_model=List[PurchaseResponse])
+async def get_purchases(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get purchase history for current mKisan buyer."""
+    try:
+        aadhaar_hash = hashlib.sha256(current_user.aadhar.encode()).hexdigest()
+        
+        # Get service_provider_id
+        sp_query = text("SELECT service_provider_id FROM service_providers WHERE aadhaar_hash = :aadhaar_hash")
+        sp_result = db.execute(sp_query, {"aadhaar_hash": aadhaar_hash}).fetchone()
+        
+        if not sp_result:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Service provider not found"
+            )
+        
+        service_provider_id = sp_result[0]
+        
+        # Get mkisan_provider_id
+        mkisan_query = text("""
+            SELECT mkisan_provider_id 
+            FROM mkisan_service_providers 
+            WHERE service_provider_id = :service_provider_id
+        """)
+        mkisan_result = db.execute(mkisan_query, {"service_provider_id": service_provider_id}).fetchone()
+        
+        if not mkisan_result:
+            return []
+        
+        mkisan_provider_id = mkisan_result[0]
+        
+        # Fetch purchases
+        query = text("""
+            SELECT 
+                p.purchase_id, p.mkisan_provider_id, p.product_id, p.purchase_date,
+                p.quantity_purchased, p.purchase_price_per_unit, p.total_amount,
+                p.status, p.notes, p.created_at,
+                pr.product_name
+            FROM mkisan_purchases p
+            JOIN mkisan_products pr ON p.product_id = pr.product_id
+            WHERE p.mkisan_provider_id = :mkisan_provider_id
+            ORDER BY p.purchase_date DESC
+        """)
+        
+        results = db.execute(query, {"mkisan_provider_id": mkisan_provider_id}).fetchall()
+        
+        purchases = []
+        for row in results:
+            purchases.append({
+                "purchase_id": str(row[0]),
+                "mkisan_provider_id": str(row[1]),
+                "product_id": str(row[2]),
+                "product_name": row[10],
+                "purchase_date": str(row[3]),
+                "quantity_purchased": row[4],
+                "purchase_price_per_unit": float(row[5]),
+                "total_amount": float(row[6]),
+                "status": str(row[7]),
+                "notes": row[8],
+                "created_at": str(row[9])
+            })
+        
+        return purchases
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching purchases: {str(e)}"
+        )

@@ -60,15 +60,23 @@ interface Product {
   updated_at: string;
 }
 
+interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
 const ProviderDashboard: React.FC = () => {
   const [requests, setRequests] = useState<ServiceOnboardingRequest[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [purchases, setPurchases] = useState<any[]>([]);
   const [providerType, setProviderType] = useState<'esanjeevani' | 'mkisan' | 'unknown'>('unknown');
   const [productsLoading, setProductsLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<'appointments' | 'products' | 'services'>('appointments');
+  const [activeTab, setActiveTab] = useState<'appointments' | 'products' | 'services' | 'cart' | 'history'>('appointments');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
@@ -87,6 +95,12 @@ const ProviderDashboard: React.FC = () => {
     // Always try to fetch products in case user is mKisan provider
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    if (providerType === 'mkisan') {
+      fetchPurchaseHistory();
+    }
+  }, [providerType]);
 
   useEffect(() => {
     if (providerType === 'esanjeevani') {
@@ -188,6 +202,75 @@ const ProviderDashboard: React.FC = () => {
       }
     } finally {
       setProductsLoading(false);
+    }
+  };
+
+  const addToCart = (product: Product) => {
+    try {
+      const existingItem = cart.find(item => item.product.product_id === product.product_id);
+      if (existingItem) {
+        setCart(cart.map(item => 
+          item.product.product_id === product.product_id 
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        ));
+      } else {
+        setCart([...cart, { product, quantity: 1 }]);
+      }
+      // Switch to cart tab to show the item was added
+      setActiveTab('cart');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add product to cart');
+    }
+  };
+
+  const removeFromCart = (productId: string) => {
+    setCart(cart.filter(item => item.product.product_id !== productId));
+  };
+
+  const updateCartQuantity = (productId: string, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+    setCart(cart.map(item => 
+      item.product.product_id === productId 
+        ? { ...item, quantity }
+        : item
+    ));
+  };
+
+  const getCartTotal = () => {
+    return cart.reduce((total, item) => total + (item.product.price_per_unit * item.quantity), 0);
+  };
+
+  const handleCheckout = async () => {
+    try {
+      const purchases = await Promise.all(cart.map(item => 
+        api.post('/mkisan/purchases', {
+          product_id: item.product.product_id,
+          quantity_purchased: item.quantity.toString(),
+          purchase_price_per_unit: item.product.price_per_unit,
+          total_amount: item.product.price_per_unit * item.quantity
+        })
+      ));
+      
+      alert('Purchase completed successfully!');
+      setCart([]);
+      setActiveTab('history');
+      fetchPurchaseHistory();
+    } catch (error: any) {
+      alert(error.response?.data?.detail || 'Failed to complete purchase');
+    }
+  };
+
+  const fetchPurchaseHistory = async () => {
+    try {
+      const response = await api.get('/mkisan/purchases');
+      setPurchases(response.data || []);
+    } catch (error: any) {
+      console.error('Failed to fetch purchase history:', error);
     }
   };
 
@@ -336,18 +419,59 @@ const ProviderDashboard: React.FC = () => {
             </button>
           )}
           {(providerType === 'mkisan' || (providerType !== 'esanjeevani' && products.length > 0)) && (
+            <>
+              <button
+                onClick={() => setActiveTab('products')}
+                className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 justify-center ${activeTab === 'products'
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                  }`}
+              >
+                <Package size={16} />
+                Available Products
+                {products.length > 0 && (
+                  <span className={`ml-1.5 px-2 py-0.5 rounded-full text-xs ${activeTab === 'products' ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'}`}>
+                    {products.length}
+                  </span>
+                )}
+              </button>
+            </>
+          )}
+          {/* Cart tab - show if products exist or cart has items */}
+          {(products.length > 0 || cart.length > 0) && (
             <button
-              onClick={() => setActiveTab('products')}
-              className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 justify-center ${activeTab === 'products'
+              onClick={() => setActiveTab('cart')}
+              className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 justify-center ${activeTab === 'cart'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-500 hover:text-slate-700'
                 }`}
             >
-              <Package size={16} />
-              Available Products
-              {products.length > 0 && (
-                <span className={`ml-1.5 px-2 py-0.5 rounded-full text-xs ${activeTab === 'products' ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'}`}>
-                  {products.length}
+              <ShoppingCart size={16} />
+              Cart
+              {cart.length > 0 && (
+                <span className={`ml-1.5 px-2 py-0.5 rounded-full text-xs ${activeTab === 'cart' ? 'bg-blue-100 text-blue-700' : 'bg-slate-200 text-slate-600'}`}>
+                  {cart.length}
+                </span>
+              )}
+            </button>
+          )}
+          {/* Purchase History tab - show if products exist or purchases exist */}
+          {(products.length > 0 || purchases.length > 0) && (
+            <button
+              onClick={() => {
+                setActiveTab('history');
+                fetchPurchaseHistory();
+              }}
+              className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 justify-center ${activeTab === 'history'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+                }`}
+            >
+              <FileText size={16} />
+              Purchase History
+              {purchases.length > 0 && (
+                <span className={`ml-1.5 px-2 py-0.5 rounded-full text-xs ${activeTab === 'history' ? 'bg-orange-100 text-orange-700' : 'bg-slate-200 text-slate-600'}`}>
+                  {purchases.length}
                 </span>
               )}
             </button>
@@ -427,7 +551,7 @@ const ProviderDashboard: React.FC = () => {
                     )}
                     
                     <div className="pt-3 border-t border-slate-100">
-                      <div className="flex items-center justify-between text-xs text-slate-500">
+                      <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
                         <div className="flex items-center gap-1.5">
                           <Users size={12} className="text-slate-400" />
                           <span>{product.seller_name}</span>
@@ -438,6 +562,163 @@ const ProviderDashboard: React.FC = () => {
                             <span>{product.seller_phone}</span>
                           </div>
                         )}
+                      </div>
+                      <button
+                        onClick={() => addToCart(product)}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <ShoppingCart size={16} />
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Cart View */}
+        {activeTab === 'cart' && (
+          <div className="space-y-4">
+            {cart.length === 0 ? (
+              <div className="bg-white rounded-xl border border-dashed border-slate-300 p-12 flex flex-col items-center justify-center text-center">
+                <div className="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                  <ShoppingCart size={32} className="text-slate-400" />
+                </div>
+                <h4 className="text-lg font-semibold text-slate-900">Your cart is empty</h4>
+                <p className="text-slate-500 max-w-sm mt-1">Add products from the Products tab to get started.</p>
+                <button
+                  onClick={() => setActiveTab('products')}
+                  className="mt-4 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+                >
+                  Browse Products
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="bg-white rounded-xl border border-slate-200 p-6">
+                  <h3 className="text-xl font-bold text-slate-900 mb-4">Shopping Cart</h3>
+                  <div className="space-y-4">
+                    {cart.map((item) => (
+                      <div key={item.product.product_id} className="flex items-start gap-4 p-4 border border-slate-200 rounded-lg">
+                        <div className="w-20 h-20 bg-green-50 rounded-lg flex items-center justify-center shrink-0">
+                          <Package size={24} className="text-green-600" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-slate-900 mb-1">{item.product.product_name}</h4>
+                          <p className="text-sm text-slate-600 mb-2">
+                            {item.product.category} • {item.product.product_type}
+                          </p>
+                          <div className="flex items-center gap-4 text-sm text-slate-600">
+                            <span>Price: <span className="font-bold text-green-600">₹{item.product.price_per_unit.toFixed(2)}</span> per unit</span>
+                            {item.product.location && (
+                              <span className="flex items-center gap-1">
+                                <MapPin size={14} />
+                                {item.product.location}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-4 mt-3">
+                            <label className="text-sm font-medium text-slate-700">Quantity:</label>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => updateCartQuantity(item.product.product_id, item.quantity - 1)}
+                                className="w-8 h-8 rounded border border-slate-300 flex items-center justify-center hover:bg-slate-100"
+                              >
+                                -
+                              </button>
+                              <input
+                                type="number"
+                                value={item.quantity}
+                                onChange={(e) => updateCartQuantity(item.product.product_id, parseInt(e.target.value) || 1)}
+                                min="1"
+                                className="w-16 px-2 py-1 text-center border border-slate-300 rounded"
+                              />
+                              <button
+                                onClick={() => updateCartQuantity(item.product.product_id, item.quantity + 1)}
+                                className="w-8 h-8 rounded border border-slate-300 flex items-center justify-center hover:bg-slate-100"
+                              >
+                                +
+                              </button>
+                            </div>
+                            <span className="text-sm text-slate-600 ml-auto">
+                              Subtotal: <span className="font-bold text-slate-900">₹{(item.product.price_per_unit * item.quantity).toFixed(2)}</span>
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => removeFromCart(item.product.product_id)}
+                          className="text-red-600 hover:text-red-800 p-2"
+                          title="Remove"
+                        >
+                          <Trash2 size={20} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 pt-6 border-t border-slate-200">
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-lg font-semibold text-slate-900">Total:</span>
+                      <span className="text-2xl font-bold text-green-600">₹{getCartTotal().toFixed(2)}</span>
+                    </div>
+                    <button
+                      onClick={handleCheckout}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      <CheckCircle size={20} />
+                      Proceed to Checkout
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Purchase History View */}
+        {activeTab === 'history' && (
+          <div className="space-y-4">
+            {purchases.length === 0 ? (
+              <div className="bg-white rounded-xl border border-dashed border-slate-300 p-12 flex flex-col items-center justify-center text-center">
+                <div className="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                  <FileText size={32} className="text-slate-400" />
+                </div>
+                <h4 className="text-lg font-semibold text-slate-900">No purchase history</h4>
+                <p className="text-slate-500 max-w-sm mt-1">Your completed purchases will appear here.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {purchases.map((purchase: any) => (
+                  <div key={purchase.purchase_id} className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold text-slate-900 mb-1">{purchase.product_name || 'Product'}</h4>
+                        <p className="text-sm text-slate-600">
+                          Purchase Date: {new Date(purchase.purchase_date).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        purchase.status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
+                        purchase.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-700' :
+                        purchase.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-red-100 text-red-700'
+                      }`}>
+                        {purchase.status}
+                      </span>
+                    </div>
+                    <div className="space-y-2 text-sm text-slate-600">
+                      <div className="flex justify-between">
+                        <span>Quantity:</span>
+                        <span className="font-medium">{purchase.quantity_purchased}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Price per unit:</span>
+                        <span className="font-medium">₹{purchase.purchase_price_per_unit?.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between pt-2 border-t border-slate-100">
+                        <span className="font-semibold text-slate-900">Total Amount:</span>
+                        <span className="font-bold text-green-600 text-lg">₹{purchase.total_amount?.toFixed(2)}</span>
                       </div>
                     </div>
                   </div>
