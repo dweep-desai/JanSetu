@@ -18,7 +18,9 @@ import {
   Trash2,
   FileText,
   Activity,
-  Inbox
+  Inbox,
+  Package,
+  ShoppingCart
 } from 'lucide-react';
 
 interface Appointment {
@@ -36,14 +38,37 @@ interface Appointment {
   updated_at: string;
   citizen_name: string | null;
   citizen_phone: string | null;
+  citizen_gender: string | null;
+  citizen_age: number | null;
+  citizen_date_of_birth: string | null;
+  citizen_address: string | null;
+}
+
+interface Product {
+  product_id: string;
+  mkisan_citizen_id: string;
+  product_name: string;
+  product_type: string;
+  category: string;
+  quantity: string;
+  price_per_unit: number;
+  location: string | null;
+  description: string | null;
+  seller_name: string;
+  seller_phone: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 const ProviderDashboard: React.FC = () => {
   const [requests, setRequests] = useState<ServiceOnboardingRequest[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [providerType, setProviderType] = useState<'esanjeevani' | 'mkisan' | 'unknown'>('unknown');
+  const [productsLoading, setProductsLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<'appointments' | 'services'>('appointments');
+  const [activeTab, setActiveTab] = useState<'appointments' | 'products' | 'services'>('appointments');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
@@ -58,8 +83,17 @@ const ProviderDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-    fetchAppointments();
+    detectProviderType();
   }, []);
+
+  useEffect(() => {
+    if (providerType === 'esanjeevani') {
+      fetchAppointments();
+    } else if (providerType === 'mkisan') {
+      fetchProducts();
+      setActiveTab('products');
+    }
+  }, [providerType]);
 
   const fetchData = async () => {
     try {
@@ -74,6 +108,34 @@ const ProviderDashboard: React.FC = () => {
     }
   };
 
+  const detectProviderType = async () => {
+    try {
+      // Try to fetch appointments to check if e-Sanjeevani provider
+      try {
+        const response = await api.get('/appointments/provider/appointments');
+        setAppointments(response.data || []);
+        setProviderType('esanjeevani');
+        return;
+      } catch (e: any) {
+        // Not an e-Sanjeevani provider, try fetching products for mKisan
+        if (e.response?.status === 404 || e.response?.status === 403) {
+          try {
+            const productsResponse = await api.get('/mkisan/products');
+            setProducts(productsResponse.data || []);
+            setProviderType('mkisan');
+            setActiveTab('products');
+            return;
+          } catch (productsError: any) {
+            // Could be either type or not registered yet
+            console.log('Provider type detection: could not determine type');
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to detect provider type:', error);
+    }
+  };
+
   const fetchAppointments = async () => {
     try {
       const response = await api.get('/appointments/provider/appointments');
@@ -83,6 +145,22 @@ const ProviderDashboard: React.FC = () => {
       if (error.response?.status !== 404) {
         console.error('Error fetching appointments:', error);
       }
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      setProductsLoading(true);
+      const response = await api.get('/mkisan/products');
+      setProducts(response.data || []);
+      setProviderType('mkisan');
+    } catch (error: any) {
+      console.error('Failed to fetch products:', error);
+      if (error.response?.status !== 404) {
+        console.error('Error fetching products:', error);
+      }
+    } finally {
+      setProductsLoading(false);
     }
   };
 
@@ -213,21 +291,40 @@ const ProviderDashboard: React.FC = () => {
       <div className="space-y-6">
         {/* Segmented Control Tabs */}
         <div className="flex p-1 bg-slate-100 rounded-lg w-full md:w-fit border border-slate-200">
-          <button
-            onClick={() => setActiveTab('appointments')}
-            className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 justify-center ${activeTab === 'appointments'
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
-              }`}
-          >
-            <Calendar size={16} />
-            Appointment Requests
-            {pendingAppointments > 0 && (
-              <span className={`ml-1.5 px-2 py-0.5 rounded-full text-xs ${activeTab === 'appointments' ? 'bg-blue-100 text-blue-700' : 'bg-slate-200 text-slate-600'}`}>
-                {pendingAppointments}
-              </span>
-            )}
-          </button>
+          {providerType === 'esanjeevani' && (
+            <button
+              onClick={() => setActiveTab('appointments')}
+              className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 justify-center ${activeTab === 'appointments'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+                }`}
+            >
+              <Calendar size={16} />
+              Appointment Requests
+              {pendingAppointments > 0 && (
+                <span className={`ml-1.5 px-2 py-0.5 rounded-full text-xs ${activeTab === 'appointments' ? 'bg-blue-100 text-blue-700' : 'bg-slate-200 text-slate-600'}`}>
+                  {pendingAppointments}
+                </span>
+              )}
+            </button>
+          )}
+          {providerType === 'mkisan' && (
+            <button
+              onClick={() => setActiveTab('products')}
+              className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 justify-center ${activeTab === 'products'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-700'
+                }`}
+            >
+              <Package size={16} />
+              Available Products
+              {products.length > 0 && (
+                <span className={`ml-1.5 px-2 py-0.5 rounded-full text-xs ${activeTab === 'products' ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'}`}>
+                  {products.length}
+                </span>
+              )}
+            </button>
+          )}
           <button
             onClick={() => setActiveTab('services')}
             className={`flex-1 md:flex-none px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 justify-center ${activeTab === 'services'
@@ -244,6 +341,84 @@ const ProviderDashboard: React.FC = () => {
             )}
           </button>
         </div>
+
+        {/* Products Grid (mKisan) */}
+        {activeTab === 'products' && (
+          <div className="space-y-4">
+            {productsLoading ? (
+              <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
+                <p className="text-slate-600">Loading products...</p>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="bg-white rounded-xl border border-dashed border-slate-300 p-12 flex flex-col items-center justify-center text-center">
+                <div className="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                  <Package size={32} className="text-slate-400" />
+                </div>
+                <h4 className="text-lg font-semibold text-slate-900">No products available</h4>
+                <p className="text-slate-500 max-w-sm mt-1">There are no products listed on the mKisan portal at the moment.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {products.map((product) => (
+                  <div
+                    key={product.product_id}
+                    className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all duration-200"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold text-slate-900 mb-1">{product.product_name}</h4>
+                        <p className="text-sm text-slate-600 mb-2">
+                          <span className="font-medium">{product.category}</span> • {product.product_type}
+                        </p>
+                      </div>
+                      <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center shrink-0">
+                        <Package size={20} className="text-green-600" />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-600">Quantity:</span>
+                        <span className="font-medium text-slate-900">{product.quantity}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-600">Price per unit:</span>
+                        <span className="font-bold text-green-600">₹{product.price_per_unit.toFixed(2)}</span>
+                      </div>
+                      {product.location && (
+                        <div className="flex items-center gap-1.5 text-sm text-slate-600">
+                          <MapPin size={14} className="text-slate-400" />
+                          <span>{product.location}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {product.description && (
+                      <p className="text-sm text-slate-500 mb-4 bg-slate-50 p-3 rounded border border-slate-100 line-clamp-2">
+                        {product.description}
+                      </p>
+                    )}
+                    
+                    <div className="pt-3 border-t border-slate-100">
+                      <div className="flex items-center justify-between text-xs text-slate-500">
+                        <div className="flex items-center gap-1.5">
+                          <Users size={12} className="text-slate-400" />
+                          <span>{product.seller_name}</span>
+                        </div>
+                        {product.seller_phone && (
+                          <div className="flex items-center gap-1.5">
+                            <Phone size={12} className="text-slate-400" />
+                            <span>{product.seller_phone}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Appointments Grid */}
         {activeTab === 'appointments' && (
@@ -508,17 +683,17 @@ const ProviderDashboard: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4">
-              <div className="bg-slate-50 p-4 rounded-xl space-y-2 border border-slate-100">
+            <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+              {/* Appointment Details */}
+              <div className="bg-slate-50 p-4 rounded-xl space-y-3 border border-slate-100">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="font-bold text-slate-900">{selectedAppointment.citizen_name || 'Unknown Citizen'}</h4>
-                    <p className="text-sm text-slate-500">{selectedAppointment.citizen_phone || 'No phone number'}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-slate-900">{selectedAppointment.appointment_date}</p>
+                    <h4 className="font-bold text-slate-900">{selectedAppointment.appointment_date}</h4>
                     <p className="text-sm text-slate-500">{selectedAppointment.appointment_time}</p>
                   </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(selectedAppointment.status)}`}>
+                    {selectedAppointment.status}
+                  </span>
                 </div>
                 {selectedAppointment.symptoms && (
                   <div className="pt-2 mt-2 border-t border-slate-200">
@@ -528,10 +703,58 @@ const ProviderDashboard: React.FC = () => {
                 )}
                 {selectedAppointment.medical_history && (
                   <div className="pt-2 mt-2 border-t border-slate-200">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">History</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Medical History</span>
                     <p className="text-sm text-slate-700 mt-0.5">{selectedAppointment.medical_history}</p>
                   </div>
                 )}
+              </div>
+
+              {/* Citizen Details Section */}
+              <div className="bg-blue-50 p-4 rounded-xl space-y-3 border border-blue-100">
+                <h4 className="font-bold text-slate-900 text-lg flex items-center gap-2">
+                  <Users size={18} className="text-blue-600" />
+                  Citizen Details
+                </h4>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Full Name</span>
+                    <p className="text-slate-900 font-medium">{selectedAppointment.citizen_name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Phone</span>
+                    <p className="text-slate-900 font-medium flex items-center gap-1">
+                      <Phone size={14} className="text-slate-400" />
+                      {selectedAppointment.citizen_phone || 'N/A'}
+                    </p>
+                  </div>
+                  {selectedAppointment.citizen_gender && (
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Gender</span>
+                      <p className="text-slate-900 font-medium">{selectedAppointment.citizen_gender}</p>
+                    </div>
+                  )}
+                  {selectedAppointment.citizen_age !== null && (
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Age</span>
+                      <p className="text-slate-900 font-medium">{selectedAppointment.citizen_age} years</p>
+                    </div>
+                  )}
+                  {selectedAppointment.citizen_date_of_birth && (
+                    <div className="col-span-2">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Date of Birth</span>
+                      <p className="text-slate-900 font-medium">{selectedAppointment.citizen_date_of_birth}</p>
+                    </div>
+                  )}
+                  {selectedAppointment.citizen_address && (
+                    <div className="col-span-2">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Address</span>
+                      <p className="text-slate-900 font-medium flex items-start gap-1">
+                        <MapPin size={14} className="text-slate-400 mt-0.5 flex-shrink-0" />
+                        <span>{selectedAppointment.citizen_address}</span>
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {!actionType ? (

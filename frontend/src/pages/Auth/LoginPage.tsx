@@ -498,12 +498,7 @@ const LoginPage: React.FC = () => {
                     className="form-select"
                   >
                     <option value="">Select category</option>
-                    <option value="PROCUREMENT_AGENT">Procurement Agent</option>
-                    <option value="WHOLESALER">Wholesaler</option>
-                    <option value="RETAILER">Retailer</option>
-                    <option value="EXPORTER">Exporter</option>
-                    <option value="PROCESSING_UNIT">Processing Unit</option>
-                    <option value="OTHER">Other</option>
+                    <option value="BUYER">Buyer</option>
                   </select>
                 </div>
                 <div className="form-group">

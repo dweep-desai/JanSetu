@@ -42,6 +42,10 @@ class AppointmentResponse(BaseModel):
     # Include citizen info for provider view
     citizen_name: Optional[str] = None
     citizen_phone: Optional[str] = None
+    citizen_gender: Optional[str] = None
+    citizen_age: Optional[int] = None
+    citizen_date_of_birth: Optional[str] = None
+    citizen_address: Optional[str] = None
 
 
 class ProviderResponse(BaseModel):
@@ -315,7 +319,9 @@ async def get_provider_appointments(
                 cr.appointment_date, cr.appointment_time, cr.status,
                 cr.symptoms, cr.medical_history, cr.rejection_reason, cr.provider_notes,
                 cr.created_at, cr.updated_at,
-                c.full_name as citizen_name, c.phone as citizen_phone
+                c.full_name as citizen_name, c.phone as citizen_phone,
+                c.gender as citizen_gender, c.age as citizen_age,
+                c.date_of_birth as citizen_date_of_birth, c.address as citizen_address
             FROM consultation_requests cr
             JOIN citizens c ON cr.citizen_id = c.citizen_id
             WHERE cr.esanjeevani_provider_id = :esanjeevani_provider_id
@@ -341,7 +347,11 @@ async def get_provider_appointments(
                 created_at=str(row[10]),
                 updated_at=str(row[11]),
                 citizen_name=str(row[12]) if row[12] else None,
-                citizen_phone=str(row[13]) if row[13] else None
+                citizen_phone=str(row[13]) if row[13] else None,
+                citizen_gender=str(row[14]) if row[14] else None,
+                citizen_age=int(row[15]) if row[15] is not None else None,
+                citizen_date_of_birth=str(row[16]) if row[16] else None,
+                citizen_address=str(row[17]) if row[17] else None
             ))
         
         return appointments

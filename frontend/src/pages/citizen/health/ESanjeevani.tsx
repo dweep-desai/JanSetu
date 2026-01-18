@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Video, Calendar, Clock, Stethoscope } from 'lucide-react';
+import { Video, Calendar, Clock, Stethoscope, CheckCircle, XCircle, AlertCircle, FileText } from 'lucide-react';
 import api from '../../../services/api';
 
 interface Provider {
@@ -12,12 +12,32 @@ interface Provider {
     phone: string | null;
 }
 
+interface Appointment {
+    consultation_id: string;
+    citizen_id: string;
+    esanjeevani_provider_id: string;
+    appointment_date: string;
+    appointment_time: string;
+    status: string;
+    symptoms: string | null;
+    medical_history: string | null;
+    rejection_reason: string | null;
+    provider_notes: string | null;
+    created_at: string;
+    updated_at: string;
+    provider_name: string | null;
+    specialization: string | null;
+}
+
 const ESanjeevani = () => {
+    const [activeTab, setActiveTab] = useState<'book' | 'appointments'>('book');
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
     const [selectedSlot, setSelectedSlot] = useState('');
     const [providers, setProviders] = useState<Provider[]>([]);
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [loading, setLoading] = useState(true);
+    const [appointmentsLoading, setAppointmentsLoading] = useState(false);
     const [booking, setBooking] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
@@ -53,6 +73,12 @@ const ESanjeevani = () => {
         fetchProviders();
     }, []);
 
+    useEffect(() => {
+        if (activeTab === 'appointments') {
+            fetchAppointments();
+        }
+    }, [activeTab]);
+
     const fetchProviders = async () => {
         try {
             setLoading(true);
@@ -64,6 +90,19 @@ const ESanjeevani = () => {
             setError('Failed to load service providers. Please try again later.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchAppointments = async () => {
+        try {
+            setAppointmentsLoading(true);
+            const response = await api.get('/appointments/my-appointments');
+            setAppointments(response.data);
+        } catch (err: any) {
+            console.error('Failed to fetch appointments:', err);
+            setError('Failed to load your appointments. Please try again later.');
+        } finally {
+            setAppointmentsLoading(false);
         }
     };
 
@@ -92,6 +131,11 @@ const ESanjeevani = () => {
             setSelectedProvider(null);
             setSelectedSlot('');
             setSelectedDate('');
+            
+            // Refresh appointments if on appointments tab
+            if (activeTab === 'appointments') {
+                fetchAppointments();
+            }
         } catch (err: any) {
             console.error('Failed to book appointment:', err);
             setError(err.response?.data?.detail || 'Failed to book appointment. Please try again.');
@@ -114,11 +158,71 @@ const ESanjeevani = () => {
         );
     }
 
+    const getStatusColor = (status: string) => {
+        switch (status.toUpperCase()) {
+            case 'APPROVED': return 'bg-green-100 text-green-700 border-green-200';
+            case 'PENDING': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+            case 'REJECTED': return 'bg-red-50 text-red-700 border-red-200';
+            case 'COMPLETED': return 'bg-blue-50 text-blue-700 border-blue-200';
+            case 'CANCELLED': return 'bg-gray-50 text-gray-700 border-gray-200';
+            default: return 'bg-slate-100 text-slate-700 border-slate-200';
+        }
+    };
+
+    const getStatusIcon = (status: string) => {
+        switch (status.toUpperCase()) {
+            case 'APPROVED': return <CheckCircle size={16} className="text-green-600" />;
+            case 'PENDING': return <AlertCircle size={16} className="text-yellow-600" />;
+            case 'REJECTED': return <XCircle size={16} className="text-red-600" />;
+            case 'COMPLETED': return <CheckCircle size={16} className="text-blue-600" />;
+            case 'CANCELLED': return <XCircle size={16} className="text-gray-600" />;
+            default: return <AlertCircle size={16} className="text-slate-600" />;
+        }
+    };
+
     return (
         <div className="max-w-4xl mx-auto p-4">
             <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">e-Sanjeevani</h1>
                 <p className="text-gray-600">Telemedicine services - Consult doctors online</p>
+            </div>
+
+            {/* Tabs */}
+            <div className="mb-6 flex gap-2 border-b border-gray-200">
+                <button
+                    onClick={() => {
+                        setActiveTab('book');
+                        setError(null);
+                        setSuccess(null);
+                    }}
+                    className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+                        activeTab === 'book'
+                            ? 'border-teal-600 text-teal-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                >
+                    Book Appointment
+                </button>
+                <button
+                    onClick={() => {
+                        setActiveTab('appointments');
+                        setError(null);
+                        setSuccess(null);
+                    }}
+                    className={`px-6 py-3 font-medium transition-colors border-b-2 flex items-center gap-2 ${
+                        activeTab === 'appointments'
+                            ? 'border-teal-600 text-teal-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                >
+                    <FileText size={16} />
+                    My Appointments
+                    {appointments.filter(a => a.status === 'PENDING').length > 0 && (
+                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">
+                            {appointments.filter(a => a.status === 'PENDING').length}
+                        </span>
+                    )}
+                </button>
             </div>
 
             {error && (
@@ -133,7 +237,118 @@ const ESanjeevani = () => {
                 </div>
             )}
 
-            {!selectedProvider ? (
+            {activeTab === 'appointments' ? (
+                <div className="space-y-4">
+                    {appointmentsLoading ? (
+                        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-center">
+                            <p className="text-gray-600">Loading your appointments...</p>
+                        </div>
+                    ) : appointments.length === 0 ? (
+                        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-center">
+                            <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+                            <h3 className="text-lg font-semibold text-gray-800 mb-2">No appointments yet</h3>
+                            <p className="text-gray-600">You haven't booked any appointments. Book your first appointment to get started.</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-bold text-gray-800">
+                                My Appointments ({appointments.length})
+                            </h2>
+                            <div className="grid grid-cols-1 gap-4">
+                                {appointments.map((appointment) => (
+                                    <div
+                                        key={appointment.consultation_id}
+                                        className={`bg-white rounded-xl border p-5 shadow-sm transition-all duration-200 ${
+                                            appointment.status === 'PENDING'
+                                                ? 'border-l-4 border-l-yellow-400 border-gray-200'
+                                                : appointment.status === 'APPROVED'
+                                                ? 'border-l-4 border-l-green-400 border-gray-200'
+                                                : appointment.status === 'REJECTED'
+                                                ? 'border-l-4 border-l-red-400 border-gray-200'
+                                                : 'border-gray-200'
+                                        }`}
+                                    >
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <div className="w-10 h-10 bg-teal-50 rounded-lg flex items-center justify-center">
+                                                        <Stethoscope size={20} className="text-teal-600" />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="font-bold text-lg text-gray-900">
+                                                            {appointment.provider_name || 'Unknown Provider'}
+                                                        </h3>
+                                                        {appointment.specialization && (
+                                                            <p className="text-sm text-gray-600">{appointment.specialization}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                {getStatusIcon(appointment.status)}
+                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(appointment.status)}`}>
+                                                    {appointment.status}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4 mb-3 text-sm">
+                                            <div className="flex items-center gap-2 text-gray-600">
+                                                <Calendar size={16} className="text-gray-400" />
+                                                <span>{appointment.appointment_date}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-gray-600">
+                                                <Clock size={16} className="text-gray-400" />
+                                                <span>{appointment.appointment_time}</span>
+                                            </div>
+                                        </div>
+
+                                        {appointment.symptoms && (
+                                            <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 block mb-1">Symptoms</span>
+                                                <p className="text-sm text-gray-700">{appointment.symptoms}</p>
+                                            </div>
+                                        )}
+
+                                        {appointment.status === 'REJECTED' && appointment.rejection_reason && (
+                                            <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                                                <div className="flex items-start gap-2">
+                                                    <XCircle size={16} className="text-red-600 mt-0.5 flex-shrink-0" />
+                                                    <div>
+                                                        <span className="text-xs font-semibold text-red-700 block mb-1">Rejection Reason</span>
+                                                        <p className="text-sm text-red-800">{appointment.rejection_reason}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {appointment.status === 'APPROVED' && appointment.provider_notes && (
+                                            <div className="mt-3 p-3 bg-green-50 rounded-lg border border-green-100">
+                                                <div className="flex items-start gap-2">
+                                                    <CheckCircle size={16} className="text-green-600 mt-0.5 flex-shrink-0" />
+                                                    <div>
+                                                        <span className="text-xs font-semibold text-green-700 block mb-1">Provider Notes</span>
+                                                        <p className="text-sm text-green-800">{appointment.provider_notes}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {appointment.status === 'PENDING' && (
+                                            <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+                                                <p className="text-sm text-yellow-800 flex items-center gap-2">
+                                                    <AlertCircle size={16} />
+                                                    Your appointment request is pending. The provider will review and notify you soon.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ) : !selectedProvider ? (
                 <div className="space-y-4">
                     <h2 className="text-xl font-bold text-gray-800 mb-4">
                         Available Service Providers ({providers.length})

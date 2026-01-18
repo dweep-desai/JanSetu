@@ -42,7 +42,7 @@ CREATE TABLE esanjeevani_service_providers (
 CREATE TABLE mkisan_service_providers (
     mkisan_provider_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     service_provider_id UUID UNIQUE NOT NULL,
-    provider_category VARCHAR(50) NOT NULL CHECK (provider_category IN ('PROCUREMENT_AGENT', 'WHOLESALER', 'RETAILER', 'EXPORTER', 'PROCESSING_UNIT', 'OTHER')),
+    provider_category VARCHAR(50) NOT NULL CHECK (provider_category IN ('BUYER')),
     business_license VARCHAR(255),
     gst_number VARCHAR(50),
     years_in_business INTEGER,

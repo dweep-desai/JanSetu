@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS esanjeevani_service_providers (
 CREATE TABLE IF NOT EXISTS mkisan_service_providers (
     mkisan_provider_id TEXT PRIMARY KEY,
     service_provider_id TEXT UNIQUE NOT NULL,
-    provider_category TEXT NOT NULL CHECK (provider_category IN ('PROCUREMENT_AGENT', 'WHOLESALER', 'RETAILER', 'EXPORTER', 'PROCESSING_UNIT', 'OTHER')),
+    provider_category TEXT NOT NULL CHECK (provider_category IN ('BUYER')),
     business_license TEXT,
     gst_number TEXT,
     years_in_business INTEGER,

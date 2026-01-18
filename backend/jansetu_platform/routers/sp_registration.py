@@ -45,6 +45,19 @@ async def register_service_provider(
                 detail="request_type must be 'ESANJEEVANI' or 'MKISAN'"
             )
         
+        # Validate mKisan provider_category
+        if request.request_type == 'MKISAN':
+            if not request.provider_category:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="provider_category is required for MKISAN registration"
+                )
+            if request.provider_category != 'BUYER':
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="provider_category must be 'BUYER' for MKISAN registration"
+                )
+        
         # Look up citizen by Aadhaar
         aadhaar_hash = hashlib.sha256(request.aadhar.encode()).hexdigest()
         
