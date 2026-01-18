@@ -151,11 +151,13 @@
 
 .profile-input {
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border);
+  border: 1px solid #cbd5e1;
   border-radius: 0.375rem;
   font-size: 0.875rem;
   outline: none;
   transition: border-color 0.2s ease;
+  background: var(--card);
+  color: var(--foreground);
 }
 
 .profile-input:focus {

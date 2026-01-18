@@ -5,6 +5,7 @@ from sqlalchemy import text
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel
+import uuid
 from ..database import get_db
 from ..models.service import Service, ServiceOnboardingRequest, OnboardingStatus, ServiceStatus
 from ..schemas.service import ServiceOnboardingRequestResponse, OnboardingRequestUpdate, ServiceResponse
@@ -364,6 +365,116 @@ async def approve_sp_registration_request(
         )
     
     admin_id = str(admin_result[0])
+    
+    # First, get the request details
+    if settings.DATABASE_URL.startswith('sqlite'):
+        get_request_query = text("""
+            SELECT service_provider_id, request_type, provider_type, specialization, 
+                   years_of_experience, provider_category, business_license, gst_number, years_in_business
+            FROM sp_registration_requests
+            WHERE request_id = :request_id
+        """)
+    else:
+        get_request_query = text("""
+            SELECT service_provider_id, request_type, provider_type, specialization, 
+                   years_of_experience, provider_category, business_license, gst_number, years_in_business
+            FROM sp_registration_requests
+            WHERE request_id = :request_id
+        """)
+    
+    request_data = db.execute(get_request_query, {"request_id": request_id}).fetchone()
+    
+    if not request_data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="SP registration request not found"
+        )
+    
+    service_provider_id = str(request_data[0])
+    request_type = str(request_data[1])
+    
+    # Create entry in the appropriate service provider table
+    if request_type == 'ESANJEEVANI':
+        provider_type = request_data[2]
+        specialization = request_data[3]
+        years_of_experience = request_data[4]
+        
+        # Check if already exists
+        check_query = text("""
+            SELECT esanjeevani_provider_id FROM esanjeevani_service_providers 
+            WHERE service_provider_id = :service_provider_id
+        """)
+        existing = db.execute(check_query, {"service_provider_id": service_provider_id}).fetchone()
+        
+        if not existing:
+            esanjeevani_provider_id = str(uuid.uuid4())
+            
+            if settings.DATABASE_URL.startswith('sqlite'):
+                insert_query = text("""
+                    INSERT INTO esanjeevani_service_providers 
+                    (esanjeevani_provider_id, service_provider_id, provider_type, specialization, 
+                     years_of_experience, available_slots, rating, total_consultations, isSP)
+                    VALUES (:esanjeevani_provider_id, :service_provider_id, :provider_type, :specialization,
+                            :years_of_experience, 0, 0.0, 0, 1)
+                """)
+            else:
+                insert_query = text("""
+                    INSERT INTO esanjeevani_service_providers 
+                    (esanjeevani_provider_id, service_provider_id, provider_type, specialization, 
+                     years_of_experience, available_slots, rating, total_consultations, isSP)
+                    VALUES (:esanjeevani_provider_id, :service_provider_id, :provider_type, :specialization,
+                            :years_of_experience, 0, 0.0, 0, TRUE)
+                """)
+            
+            db.execute(insert_query, {
+                "esanjeevani_provider_id": esanjeevani_provider_id,
+                "service_provider_id": service_provider_id,
+                "provider_type": provider_type,
+                "specialization": specialization or "",
+                "years_of_experience": years_of_experience
+            })
+    
+    elif request_type == 'MKISAN':
+        provider_category = request_data[5]
+        business_license = request_data[6]
+        gst_number = request_data[7]
+        years_in_business = request_data[8]
+        
+        # Check if already exists
+        check_query = text("""
+            SELECT mkisan_provider_id FROM mkisan_service_providers 
+            WHERE service_provider_id = :service_provider_id
+        """)
+        existing = db.execute(check_query, {"service_provider_id": service_provider_id}).fetchone()
+        
+        if not existing:
+            mkisan_provider_id = str(uuid.uuid4())
+            
+            if settings.DATABASE_URL.startswith('sqlite'):
+                insert_query = text("""
+                    INSERT INTO mkisan_service_providers 
+                    (mkisan_provider_id, service_provider_id, provider_category, business_license, 
+                     gst_number, years_in_business, isSP)
+                    VALUES (:mkisan_provider_id, :service_provider_id, :provider_category, :business_license,
+                            :gst_number, :years_in_business, 1)
+                """)
+            else:
+                insert_query = text("""
+                    INSERT INTO mkisan_service_providers 
+                    (mkisan_provider_id, service_provider_id, provider_category, business_license, 
+                     gst_number, years_in_business, isSP)
+                    VALUES (:mkisan_provider_id, :service_provider_id, :provider_category, :business_license,
+                            :gst_number, :years_in_business, TRUE)
+                """)
+            
+            db.execute(insert_query, {
+                "mkisan_provider_id": mkisan_provider_id,
+                "service_provider_id": service_provider_id,
+                "provider_category": provider_category,
+                "business_license": business_license,
+                "gst_number": gst_number,
+                "years_in_business": years_in_business
+            })
     
     # Update request status
     if settings.DATABASE_URL.startswith('sqlite'):

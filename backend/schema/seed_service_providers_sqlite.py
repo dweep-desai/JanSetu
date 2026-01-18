@@ -22,11 +22,11 @@ def seed_service_providers():
         conn.execute('PRAGMA foreign_keys = ON')
         cursor = conn.cursor()
         
-        # Check if data already exists
-        cursor.execute("SELECT COUNT(*) FROM service_providers")
-        count = cursor.fetchone()[0]
-        if count > 0:
-            print(f"[INFO] Service providers already exist ({count} records). Skipping seed.")
+        # Check if e-Sanjeevani providers already exist (seed only if none exist)
+        cursor.execute("SELECT COUNT(*) FROM esanjeevani_service_providers")
+        esanjeevani_count = cursor.fetchone()[0]
+        if esanjeevani_count > 0:
+            print(f"[INFO] E-Sanjeevani providers already exist ({esanjeevani_count} records). Skipping seed.")
             conn.close()
             return
         

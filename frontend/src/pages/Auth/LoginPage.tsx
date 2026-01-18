@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import './LoginPage.css';
 
 type LoginTab = 'citizen' | 'service-provider' | 'admin';
 type SPSubTab = 'login' | 'register';
@@ -186,24 +187,22 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-primary/90 via-primary to-accent/80 p-5">
-      <div className="bg-card rounded-xl p-10 w-full max-w-md shadow-2xl border border-border">
-        <h1 className="text-center text-foreground mb-2 text-3xl font-bold">JanSetu</h1>
-        <p className="text-center text-muted-foreground mb-8 text-sm">Unified Digital Public Infrastructure Platform</p>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h1 className="login-title">JanSetu</h1>
+          <p className="login-subtitle">Unified Digital Public Infrastructure Platform</p>
+        </div>
         
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-border">
+        <div className="login-tabs">
           <button
             onClick={() => {
               setActiveTab('citizen');
               setError('');
               setSuccess('');
             }}
-            className={`px-4 py-2 font-medium transition-colors ${
-              activeTab === 'citizen'
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            className={`login-tab ${activeTab === 'citizen' ? 'active' : ''}`}
           >
             Citizen
           </button>
@@ -213,11 +212,7 @@ const LoginPage: React.FC = () => {
               setError('');
               setSuccess('');
             }}
-            className={`px-4 py-2 font-medium transition-colors ${
-              activeTab === 'service-provider'
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            className={`login-tab ${activeTab === 'service-provider' ? 'active' : ''}`}
           >
             Service Provider
           </button>
@@ -227,11 +222,7 @@ const LoginPage: React.FC = () => {
               setError('');
               setSuccess('');
             }}
-            className={`px-4 py-2 font-medium transition-colors ${
-              activeTab === 'admin'
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            className={`login-tab ${activeTab === 'admin' ? 'active' : ''}`}
           >
             Admin
           </button>
@@ -241,9 +232,9 @@ const LoginPage: React.FC = () => {
         {activeTab === 'citizen' && (
           <>
             {!otpId ? (
-              <form onSubmit={handleAadharSubmit}>
-                <div className="mb-5">
-                  <label htmlFor="aadhar" className="block mb-2 text-foreground font-medium">Aadhar Card Number</label>
+              <form onSubmit={handleAadharSubmit} className="login-form">
+                <div className="form-group">
+                  <label htmlFor="aadhar" className="form-label">Aadhar Card Number</label>
                   <input
                     type="text"
                     id="aadhar"
@@ -253,22 +244,22 @@ const LoginPage: React.FC = () => {
                     required
                     minLength={12}
                     maxLength={20}
-                    className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
+                    className="form-input"
                   />
                 </div>
-                {error && <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md mb-4 text-sm border border-destructive/20">{error}</div>}
+                {error && <div className="error-message">{error}</div>}
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition-colors disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
+                  className="btn btn-primary"
                 >
                   {loading ? 'Sending...' : 'Send OTP'}
                 </button>
               </form>
             ) : (
-              <form onSubmit={handleOTPSubmit}>
-                <div className="mb-5">
-                  <label htmlFor="otp" className="block mb-2 text-foreground font-medium">Enter OTP</label>
+              <form onSubmit={handleOTPSubmit} className="login-form">
+                <div className="form-group">
+                  <label htmlFor="otp" className="form-label">Enter OTP</label>
                   <input
                     type="text"
                     id="otp"
@@ -278,31 +269,33 @@ const LoginPage: React.FC = () => {
                     required
                     maxLength={6}
                     autoFocus
-                    className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
+                    className="form-input"
                   />
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="help-text">
                     Check the <strong>backend terminal</strong> for your OTP code.
                   </p>
                 </div>
-                {error && <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md mb-4 text-sm border border-destructive/20">{error}</div>}
-                <button 
-                  type="submit" 
-                  disabled={loading || otpCode.length !== 6}
-                  className="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition-colors disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed mb-3"
-                >
-                  {loading ? 'Verifying...' : 'Verify OTP'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtpId(null);
-                    setOtpCode('');
-                    setError('');
-                  }}
-                  className="w-full py-3 bg-secondary text-secondary-foreground rounded-md font-semibold hover:bg-secondary/80 transition-colors"
-                >
-                  Change Aadhar Number
-                </button>
+                {error && <div className="error-message">{error}</div>}
+                <div className="form-actions">
+                  <button 
+                    type="submit" 
+                    disabled={loading || otpCode.length !== 6}
+                    className="btn btn-primary"
+                  >
+                    {loading ? 'Verifying...' : 'Verify OTP'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtpId(null);
+                      setOtpCode('');
+                      setError('');
+                    }}
+                    className="btn btn-secondary"
+                  >
+                    Change Aadhar Number
+                  </button>
+                </div>
               </form>
             )}
           </>
@@ -312,7 +305,7 @@ const LoginPage: React.FC = () => {
         {activeTab === 'service-provider' && (
           <>
             {/* SP Sub-tabs */}
-            <div className="flex gap-2 mb-4 border-b border-border">
+            <div className="login-subtabs">
               <button
                 type="button"
                 onClick={() => {
@@ -322,11 +315,7 @@ const LoginPage: React.FC = () => {
                   setSpLoginOtpId(null);
                   setSpLoginOtpCode('');
                 }}
-                className={`px-4 py-2 font-medium transition-colors ${
-                  spSubTab === 'login'
-                    ? 'border-b-2 border-primary text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className={`login-subtab ${spSubTab === 'login' ? 'active' : ''}`}
               >
                 Login
               </button>
@@ -337,11 +326,7 @@ const LoginPage: React.FC = () => {
                   setError('');
                   setSuccess('');
                 }}
-                className={`px-4 py-2 font-medium transition-colors ${
-                  spSubTab === 'register'
-                    ? 'border-b-2 border-primary text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className={`login-subtab ${spSubTab === 'register' ? 'active' : ''}`}
               >
                 Register
               </button>
@@ -351,9 +336,9 @@ const LoginPage: React.FC = () => {
             {spSubTab === 'login' && (
               <>
                 {!spLoginOtpId ? (
-                  <form onSubmit={handleSPLoginAadharSubmit}>
-                    <div className="mb-5">
-                      <label htmlFor="sp-login-aadhar" className="block mb-2 text-foreground font-medium">Aadhar Card Number</label>
+                  <form onSubmit={handleSPLoginAadharSubmit} className="login-form">
+                    <div className="form-group">
+                      <label htmlFor="sp-login-aadhar" className="form-label">Aadhar Card Number</label>
                       <input
                         type="text"
                         id="sp-login-aadhar"
@@ -363,25 +348,25 @@ const LoginPage: React.FC = () => {
                         required
                         minLength={12}
                         maxLength={20}
-                        className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
+                        className="form-input"
                       />
-                      <p className="text-xs text-muted-foreground mt-2">
+                      <p className="help-text">
                         Only approved service providers can login. If your registration is pending, please wait for admin approval.
                       </p>
                     </div>
-                    {error && <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md mb-4 text-sm border border-destructive/20">{error}</div>}
+                    {error && <div className="error-message">{error}</div>}
                     <button 
                       type="submit" 
                       disabled={loading}
-                      className="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition-colors disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
+                      className="btn btn-primary"
                     >
                       {loading ? 'Sending...' : 'Send OTP'}
                     </button>
                   </form>
                 ) : (
-                  <form onSubmit={handleSPLoginOTPSubmit}>
-                    <div className="mb-5">
-                      <label htmlFor="sp-login-otp" className="block mb-2 text-foreground font-medium">Enter OTP</label>
+                  <form onSubmit={handleSPLoginOTPSubmit} className="login-form">
+                    <div className="form-group">
+                      <label htmlFor="sp-login-otp" className="form-label">Enter OTP</label>
                       <input
                         type="text"
                         id="sp-login-otp"
@@ -391,31 +376,33 @@ const LoginPage: React.FC = () => {
                         required
                         maxLength={6}
                         autoFocus
-                        className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
+                        className="form-input"
                       />
-                      <p className="text-xs text-muted-foreground mt-2">
+                      <p className="help-text">
                         Check the <strong>backend terminal</strong> for your OTP code.
                       </p>
                     </div>
-                    {error && <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md mb-4 text-sm border border-destructive/20">{error}</div>}
-                    <button 
-                      type="submit" 
-                      disabled={loading || spLoginOtpCode.length !== 6}
-                      className="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition-colors disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed mb-3"
-                    >
-                      {loading ? 'Verifying...' : 'Verify OTP'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSpLoginOtpId(null);
-                        setSpLoginOtpCode('');
-                        setError('');
-                      }}
-                      className="w-full py-3 bg-secondary text-secondary-foreground rounded-md font-semibold hover:bg-secondary/80 transition-colors"
-                    >
-                      Change Aadhar Number
-                    </button>
+                    {error && <div className="error-message">{error}</div>}
+                    <div className="form-actions">
+                      <button 
+                        type="submit" 
+                        disabled={loading || spLoginOtpCode.length !== 6}
+                        className="btn btn-primary"
+                      >
+                        {loading ? 'Verifying...' : 'Verify OTP'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSpLoginOtpId(null);
+                          setSpLoginOtpCode('');
+                          setError('');
+                        }}
+                        className="btn btn-secondary"
+                      >
+                        Change Aadhar Number
+                      </button>
+                    </div>
                   </form>
                 )}
               </>
@@ -423,9 +410,9 @@ const LoginPage: React.FC = () => {
 
             {/* SP Registration */}
             {spSubTab === 'register' && (
-          <form onSubmit={handleSPRegistration} className="space-y-4">
-            <div>
-              <label className="block mb-2 text-foreground font-medium">Aadhar Card Number *</label>
+          <form onSubmit={handleSPRegistration} className="login-form">
+            <div className="form-group">
+              <label className="form-label">Aadhar Card Number *</label>
               <input
                 type="text"
                 value={spAadhar}
@@ -434,17 +421,17 @@ const LoginPage: React.FC = () => {
                 required
                 minLength={12}
                 maxLength={20}
-                className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="form-input"
               />
             </div>
 
-            <div>
-              <label className="block mb-2 text-foreground font-medium">Service Type *</label>
+            <div className="form-group">
+              <label className="form-label">Service Type *</label>
               <select
                 value={spRequestType}
                 onChange={(e) => setSpRequestType(e.target.value as 'ESANJEEVANI' | 'MKISAN' | '')}
                 required
-                className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="form-select"
               >
                 <option value="">Select service type</option>
                 <option value="ESANJEEVANI">e-Sanjeevani (Healthcare)</option>
@@ -455,13 +442,13 @@ const LoginPage: React.FC = () => {
             {/* e-Sanjeevani fields */}
             {spRequestType === 'ESANJEEVANI' && (
               <>
-                <div>
-                  <label className="block mb-2 text-foreground font-medium">Profession *</label>
+                <div className="form-group">
+                  <label className="form-label">Profession *</label>
                   <select
                     value={spProviderType}
                     onChange={(e) => setSpProviderType(e.target.value)}
                     required
-                    className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="form-select"
                   >
                     <option value="">Select profession</option>
                     <option value="DOCTOR">Doctor</option>
@@ -472,20 +459,20 @@ const LoginPage: React.FC = () => {
                   </select>
                 </div>
                 {(spProviderType === 'DOCTOR' || spProviderType === 'OTHER') && (
-                  <div>
-                    <label className="block mb-2 text-foreground font-medium">Specialization *</label>
+                  <div className="form-group">
+                    <label className="form-label">Specialization *</label>
                     <input
                       type="text"
                       value={spSpecialization}
                       onChange={(e) => setSpSpecialization(e.target.value)}
                       placeholder="e.g., Orthopedic, Cardiology"
                       required
-                      className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                      className="form-input"
                     />
                   </div>
                 )}
-                <div>
-                  <label className="block mb-2 text-foreground font-medium">Years of Experience *</label>
+                <div className="form-group">
+                  <label className="form-label">Years of Experience *</label>
                   <input
                     type="number"
                     value={spYearsOfExperience}
@@ -493,7 +480,7 @@ const LoginPage: React.FC = () => {
                     placeholder="e.g., 5"
                     required
                     min="0"
-                    className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="form-input"
                   />
                 </div>
               </>
@@ -502,13 +489,13 @@ const LoginPage: React.FC = () => {
             {/* mKisan fields */}
             {spRequestType === 'MKISAN' && (
               <>
-                <div>
-                  <label className="block mb-2 text-foreground font-medium">Provider Category *</label>
+                <div className="form-group">
+                  <label className="form-label">Provider Category *</label>
                   <select
                     value={spProviderCategory}
                     onChange={(e) => setSpProviderCategory(e.target.value)}
                     required
-                    className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="form-select"
                   >
                     <option value="">Select category</option>
                     <option value="PROCUREMENT_AGENT">Procurement Agent</option>
@@ -519,68 +506,68 @@ const LoginPage: React.FC = () => {
                     <option value="OTHER">Other</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block mb-2 text-foreground font-medium">Business License</label>
+                <div className="form-group">
+                  <label className="form-label">Business License</label>
                   <input
                     type="text"
                     value={spBusinessLicense}
                     onChange={(e) => setSpBusinessLicense(e.target.value)}
                     placeholder="Business license number"
-                    className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="form-input"
                   />
                 </div>
-                <div>
-                  <label className="block mb-2 text-foreground font-medium">GST Number</label>
+                <div className="form-group">
+                  <label className="form-label">GST Number</label>
                   <input
                     type="text"
                     value={spGstNumber}
                     onChange={(e) => setSpGstNumber(e.target.value)}
                     placeholder="GST number"
-                    className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="form-input"
                   />
                 </div>
-                <div>
-                  <label className="block mb-2 text-foreground font-medium">Years in Business</label>
+                <div className="form-group">
+                  <label className="form-label">Years in Business</label>
                   <input
                     type="number"
                     value={spYearsInBusiness}
                     onChange={(e) => setSpYearsInBusiness(e.target.value)}
                     placeholder="e.g., 5"
                     min="0"
-                    className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="form-input"
                   />
                 </div>
               </>
             )}
 
-            <div>
-              <label className="block mb-2 text-foreground font-medium">Organization Name</label>
+            <div className="form-group">
+              <label className="form-label">Organization Name</label>
               <input
                 type="text"
                 value={spOrganizationName}
                 onChange={(e) => setSpOrganizationName(e.target.value)}
                 placeholder="Organization name (optional)"
-                className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="form-input"
               />
             </div>
 
-            <div>
-              <label className="block mb-2 text-foreground font-medium">Registration Number</label>
+            <div className="form-group">
+              <label className="form-label">Registration Number</label>
               <input
                 type="text"
                 value={spRegistrationNumber}
                 onChange={(e) => setSpRegistrationNumber(e.target.value)}
                 placeholder="Registration number (optional)"
-                className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="form-input"
               />
             </div>
 
-            {error && <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md text-sm border border-destructive/20">{error}</div>}
-            {success && <div className="bg-green-100 text-green-800 px-4 py-3 rounded-md text-sm border border-green-300">{success}</div>}
+            {error && <div className="error-message">{error}</div>}
+            {success && <div className="success-message">{success}</div>}
             <button 
               type="submit" 
               disabled={loading || !spRequestType}
-              className="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition-colors disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
+              className="btn btn-primary"
             >
               {loading ? 'Submitting...' : 'Register as Service Provider'}
             </button>
@@ -591,34 +578,34 @@ const LoginPage: React.FC = () => {
 
         {/* Admin Login */}
         {activeTab === 'admin' && (
-          <form onSubmit={handleAdminLogin}>
-            <div className="mb-5">
-              <label className="block mb-2 text-foreground font-medium">Username</label>
+          <form onSubmit={handleAdminLogin} className="login-form">
+            <div className="form-group">
+              <label className="form-label">Username</label>
               <input
                 type="text"
                 value={adminUsername}
                 onChange={(e) => setAdminUsername(e.target.value)}
                 placeholder="Enter admin username"
                 required
-                className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="form-input"
               />
             </div>
-            <div className="mb-5">
-              <label className="block mb-2 text-foreground font-medium">Password</label>
+            <div className="form-group">
+              <label className="form-label">Password</label>
               <input
                 type="password"
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
                 placeholder="Enter password"
                 required
-                className="w-full px-3 py-3 border border-input rounded-md text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="form-input"
               />
             </div>
-            {error && <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md mb-4 text-sm border border-destructive/20">{error}</div>}
+            {error && <div className="error-message">{error}</div>}
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary/90 transition-colors disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
+              className="btn btn-primary"
             >
               {loading ? 'Logging in...' : 'Login as Admin'}
             </button>
