@@ -96,6 +96,20 @@ const Chatbot = () => {
         }
     };
 
+    const FormattedMessage = ({ text }: { text: string }) => {
+        const parts = text.split(/(\*\*.*?\*\*)/g);
+        return (
+            <span className="whitespace-pre-wrap break-words leading-relaxed">
+                {parts.map((part, index) => {
+                    if (part.startsWith('**') && part.endsWith('**')) {
+                        return <strong key={index} className="font-bold">{part.slice(2, -2)}</strong>;
+                    }
+                    return part;
+                })}
+            </span>
+        );
+    };
+
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
             {/* Chat Window */}
@@ -137,7 +151,7 @@ const Chatbot = () => {
                                         : 'bg-white text-gray-700 border border-gray-200 rounded-bl-none shadow-sm'
                                     }
                                 `}>
-                                    {msg.text}
+                                    <FormattedMessage text={msg.text} />
                                     <span className={`
                                         text-[10px] absolute bottom-1 ${msg.sender === 'user' ? 'left-2 text-blue-100' : 'right-2 text-gray-400'} opacity-0 group-hover:opacity-100 transition-opacity
                                     `}>
