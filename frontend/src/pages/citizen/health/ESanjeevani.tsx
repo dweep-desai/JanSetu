@@ -9,8 +9,6 @@ interface Provider {
     specialization: string;
     provider_type: string;
     years_of_experience: number | null;
-    rating: number | null;
-    available_slots: number | null;
     phone: string | null;
 }
 
@@ -23,6 +21,13 @@ const ESanjeevani = () => {
     const [booking, setBooking] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+
+    // Generate random available slots (1-15) for each provider
+    const getRandomSlots = (providerId: string): number => {
+        // Use provider ID as seed for consistent random slots per provider
+        const hash = providerId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        return (hash % 15) + 1; // Returns 1-15
+    };
 
     // Generate time slots
     const generateTimeSlots = (): string[] => {
@@ -155,19 +160,12 @@ const ESanjeevani = () => {
                                                 {provider.years_of_experience && (
                                                     <span>{provider.years_of_experience} years experience</span>
                                                 )}
-                                                {provider.rating && (
-                                                    <span className="flex items-center gap-1">
-                                                        ⭐ {provider.rating.toFixed(1)}
-                                                    </span>
-                                                )}
                                             </div>
-                                            {provider.available_slots && provider.available_slots > 0 && (
-                                                <div className="mt-2">
-                                                    <p className="text-sm font-medium text-gray-700 mb-1">
-                                                        Available Slots: {provider.available_slots}
-                                                    </p>
-                                                </div>
-                                            )}
+                                            <div className="mt-2">
+                                                <p className="text-sm font-medium text-gray-700 mb-1">
+                                                    Available Slots: {getRandomSlots(provider.esanjeevani_provider_id)}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                     <button

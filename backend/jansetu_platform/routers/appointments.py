@@ -51,8 +51,6 @@ class ProviderResponse(BaseModel):
     specialization: str
     provider_type: str
     years_of_experience: Optional[int]
-    rating: Optional[float]
-    available_slots: Optional[int]
     phone: Optional[str]
 
 
@@ -74,15 +72,13 @@ async def get_approved_esanjeevani_providers(
                 esp.specialization,
                 esp.provider_type,
                 esp.years_of_experience,
-                esp.rating,
-                esp.available_slots,
                 sp.phone
             FROM esanjeevani_service_providers esp
             JOIN service_providers sp ON esp.service_provider_id = sp.service_provider_id
             LEFT JOIN sp_registration_requests sr ON sp.service_provider_id = sr.service_provider_id 
                 AND sr.request_type = 'ESANJEEVANI'
             WHERE sr.status = 'APPROVED' OR sr.status IS NULL
-            ORDER BY esp.rating DESC NULLS LAST, sp.full_name
+            ORDER BY sp.full_name
         """
         query = text(query_str)
         result = db.execute(query)
@@ -97,9 +93,7 @@ async def get_approved_esanjeevani_providers(
                 specialization=str(row[3]),
                 provider_type=str(row[4]),
                 years_of_experience=row[5],
-                rating=float(row[6]) if row[6] else None,
-                available_slots=row[7],
-                phone=str(row[8]) if row[8] else None
+                phone=str(row[6]) if row[6] else None
             ))
         
         return providers

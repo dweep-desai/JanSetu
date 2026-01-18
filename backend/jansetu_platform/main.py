@@ -5,7 +5,7 @@ from .config import settings
 from .database import engine, Base, get_db
 from .routers import auth, services, admin, gateway, metrics, citizen, mkisan, sp_registration, appointments
 from .middleware.logging import RequestLoggingMiddleware
-from .database_init import init_citizens_schema_on_startup, init_admin_schema_on_startup
+from .database_init import init_citizens_schema_on_startup, init_admin_schema_on_startup, init_appointments_schema_on_startup
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -20,6 +20,8 @@ def init_schemas_on_startup():
         init_admin_schema_on_startup(db)
         # Then initialize citizens schema (which also initializes service providers)
         init_citizens_schema_on_startup(db)
+        # Ensure appointments schema is always initialized (in case it was missed)
+        init_appointments_schema_on_startup(db)
     finally:
         db.close()
 

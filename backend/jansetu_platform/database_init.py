@@ -51,7 +51,15 @@ def init_appointments_schema_on_startup(db):
         
         # Get database connection
         if settings.DATABASE_URL.startswith('sqlite'):
-            db_path = settings.DATABASE_URL.replace('sqlite:///', '')
+            # Handle relative and absolute paths
+            db_path = settings.DATABASE_URL.replace('sqlite:///', '').replace('sqlite://', '')
+            # If relative path, make it absolute relative to backend directory
+            if db_path.startswith('./'):
+                backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                db_path = os.path.join(backend_dir, db_path[2:])
+            elif not os.path.isabs(db_path):
+                backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                db_path = os.path.join(backend_dir, db_path)
             conn = sqlite3.connect(db_path)
             conn.execute('PRAGMA foreign_keys = ON')
             cursor = conn.cursor()
@@ -62,22 +70,36 @@ def init_appointments_schema_on_startup(db):
         # Split SQL by semicolons and execute each statement
         statements = [stmt.strip() for stmt in schema_sql.split(';') if stmt.strip()]
         
-        for statement in statements:
+        for i, statement in enumerate(statements):
             if statement and not statement.startswith('--'):
                 try:
                     cursor.execute(statement)
                 except Exception as e:
                     error_str = str(e).lower()
                     if 'already exists' not in error_str and 'duplicate' not in error_str:
-                        pass
+                        print(f"[ERROR] Failed to execute statement {i+1} in appointments schema: {e}")
+                        print(f"[ERROR] Statement: {statement[:200]}...")
+                        # Only show full traceback for table creation failures
+                        if 'CREATE TABLE' in statement.upper():
+                            import traceback
+                            traceback.print_exc()
         
         conn.commit()
+        
+        # Verify table was created
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='consultation_requests'")
+        if cursor.fetchone():
+            print("[OK] consultation_requests table created successfully!")
+        else:
+            print("[ERROR] consultation_requests table was NOT created!")
+        
         cursor.close()
         conn.close()
         
-        print("[OK] Appointments schema initialized successfully!")
     except Exception as e:
-        print(f"[WARNING] Failed to initialize appointments schema: {e}")
+        print(f"[ERROR] Failed to initialize appointments schema: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 def init_citizens_schema_on_startup(db):
@@ -85,12 +107,15 @@ def init_citizens_schema_on_startup(db):
     try:
         # Always initialize service providers (they're independent)
         init_service_providers_schema_on_startup(db)
-        # Also initialize appointments schema
-        init_appointments_schema_on_startup(db)
         
         # Check if citizens table already exists
         if check_citizens_table_exists(db):
+            # Even if citizens exist, ensure appointments schema is initialized
+            init_appointments_schema_on_startup(db)
             return  # Tables already exist, no need to initialize
+        
+        # Also initialize appointments schema
+        init_appointments_schema_on_startup(db)
         
         # Import here to avoid circular dependencies
         from jansetu_platform.database import get_db
