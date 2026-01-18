@@ -1,9 +1,9 @@
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import {
-    Home, Grid3X3, FileText, BookOpen, LayoutDashboard, History,
+    Home, Grid3X3, FileText, BookOpen, History,
     Search, Bell, Menu, User, ChevronDown, HelpCircle,
-    LogOut, Settings
+    LogOut, Settings, Activity
 } from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
 
@@ -18,7 +18,8 @@ const Sidebar = () => {
         { icon: <FileText className="w-5 h-5" />, label: "DigiLocker", path: "/citizen/digilocker", isLink: true },
         { icon: <BookOpen className="w-5 h-5" />, label: "Schemes", path: "/citizen/schemes", isLink: true },
         { icon: <History className="w-5 h-5" />, label: "My History", path: "/citizen/history", isLink: true },
-        { icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard", path: "/citizen", isLink: true },
+        { icon: <Activity className="w-5 h-5" />, label: "Public Dashboard", path: "/citizen/system-stats", isLink: true },
+
     ];
 
     const isHelpActive = location.pathname === '/citizen/help';

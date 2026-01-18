@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     # JWT
     JWT_SECRET_KEY: str = "your-secret-key-change-in-production"
     JWT_ALGORITHM: str = "HS256"
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 43200  # 30 days
     
     # OTP
     OTP_EXPIRE_MINUTES: int = 5

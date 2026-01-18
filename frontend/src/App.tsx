@@ -51,6 +51,7 @@ import DigiLockerPage from './pages/citizen/digilocker/DigiLockerPage';
 
 import Schemes from './pages/citizen/Schemes';
 import UserHistory from './pages/citizen/UserHistory';
+import SystemStats from './pages/citizen/SystemStats';
 
 import ProviderDashboard from './pages/provider/ProviderDashboard';
 
@@ -162,6 +163,7 @@ const AppRoutes = () => {
 
         {/* Other routes */}
         <Route path="schemes" element={<Schemes />} />
+        <Route path="system-stats" element={<SystemStats />} />
 
       </Route>
 

@@ -14,6 +14,7 @@ import FinancialCalculatorModal from '../../components/citizen/FinancialCalculat
 import { getWeather } from '../../services/weatherService';
 
 
+
 // Quick Services Component
 const QuickServices = () => {
   const [isHealthMenuOpen, setIsHealthMenuOpen] = useState(false);
@@ -512,6 +513,7 @@ const CitizenDashboard = () => {
       <RecentServices />
       <HelplineCategories />
       <PromoCards onOpenCalculator={() => setIsFinancialCalculatorOpen(true)} />
+
 
       <FinancialCalculatorModal
         isOpen={isFinancialCalculatorOpen}
